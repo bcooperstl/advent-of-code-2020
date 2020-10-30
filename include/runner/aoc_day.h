@@ -1,7 +1,7 @@
 #ifndef __AOC_DAY_H__
 #define __AOC_DAY_H__
 
-#include <cstring>
+#include <string>
 #include <vector>
 
 /* This is the superclass for all of the daily programs.
