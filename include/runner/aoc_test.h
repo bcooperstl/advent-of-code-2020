@@ -6,7 +6,7 @@
 
 class AocTest
 {
-    protected:
+    private:
         int m_day;
         int m_part;
         std::string m_filename;
