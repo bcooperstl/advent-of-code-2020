@@ -120,10 +120,8 @@ bool FileUtils::read_as_list_of_split_longs(std::string filename, std::vector<st
         for (std::vector<std::string>::iterator str_long_iter = long_strings.begin(); str_long_iter != long_strings.end(); ++str_long_iter)
         {
             std::string str_long = *str_long_iter;
-            const char * start = str_long.c_str();
-            char * endptr;
-            long l = strtol(str_long.c_str(), &endptr, 10);
-            if (endptr != 0)
+            long l;
+            if (safe_strtol(str_long, l))
             {
                 std::cerr << "Error on conversion to long integer from [" << str_long << "]" << std::endl;
                 return false;
@@ -131,6 +129,18 @@ bool FileUtils::read_as_list_of_split_longs(std::string filename, std::vector<st
             longs.push_back(l);
         }
         split_longs.push_back(longs);
+    }
+    return true;
+}
+
+bool FileUtils::safe_strtol(std::string str_long, long & l)
+{
+    char * endptr;
+    l = strtol(str_long.c_str(), &endptr, 10);
+    if (endptr != 0)
+    {
+        std::cerr << "Error on conversion to long integer from [" << str_long << "]" << std::endl;
+        return false;
     }
     return true;
 }
