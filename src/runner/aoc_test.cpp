@@ -22,3 +22,28 @@ bool AocTest::compare_result(string actual_result)
 {
     return m_expected_result == actual_result;
 }
+
+int AocTest::get_day()
+{
+    return m_day;
+}
+
+int AocTest::get_part()
+{
+    return m_part;
+}
+
+string AocTest::get_filename()
+{
+    return m_filename;
+}
+
+string AocTest::get_expected_result()
+{
+    return m_expected_result;
+}
+
+vector<string> AocTest::get_extra_args()
+{
+    return m_extra_args;
+}

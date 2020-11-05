@@ -19,6 +19,11 @@ class AocTest
         ~AocTest();
         bool matches(int day, int part);
         bool compare_result(string actual_result);
+        int get_day();
+        int get_part();
+        string get_filename();
+        string get_expected_result();
+        vector<string> get_extra_args();
 };
 
 #endif
