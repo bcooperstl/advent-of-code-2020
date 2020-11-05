@@ -6,6 +6,8 @@
 #include "constants.h"
 #include "file_utils.h"
 
+using namespace std;
+
 AocTests::AocTests()
 {
     load_tests();
@@ -17,33 +19,33 @@ AocTests::~AocTests()
 
 void AocTests::load_tests()
 {
-    std::vector<std::vector<std::string>> test_index_contents;
+    vector<vector<string>> test_index_contents;
     FileUtils fileutils;
-    std::string index_file = std::string(DATA_DIR)+std::string(TEST_INDEX_FILE);
+    string index_file = string(DATA_DIR)+string(TEST_INDEX_FILE);
     if (!fileutils.read_as_list_of_split_strings(index_file, test_index_contents, TEST_INDEX_DELIM, TEST_INDEX_QUOTE, TEST_INDEX_COMMENT))
     {
-        std::cerr << "Error reading test index file " << index_file << std::endl;
+        cerr << "Error reading test index file " << index_file << endl;
         return;
     }
     
-    for (std::vector<std::vector<std::string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
+    for (vector<vector<string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
     {
-        std::vector<std::string> test_parameters = *test_iter;
-        std::vector<std::string>::iterator parm_iter=test_parameters.begin();
+        vector<string> test_parameters = *test_iter;
+        vector<string>::iterator parm_iter=test_parameters.begin();
         // format is day,part,filename,expected[,...extra args]
         // TODO: Add debugging library
         long day, part;
-        std::string filename, expected;
-        std::vector<std::string> extra_args;
+        string filename, expected;
+        vector<string> extra_args;
         if (!fileutils.safe_strtol(*parm_iter, day))
         {
-            std::cerr << "Error parsing day from " << *parm_iter << std::endl;
+            cerr << "Error parsing day from " << *parm_iter << endl;
             return;
         }
         ++parm_iter;
         if (!fileutils.safe_strtol(*parm_iter, part))
         {
-            std::cerr << "Error parsing part from " << *parm_iter << std::endl;
+            cerr << "Error parsing part from " << *parm_iter << endl;
             return;
         }
         ++parm_iter;
@@ -60,16 +62,16 @@ void AocTests::load_tests()
     }
 }
 
-std::vector<AocTest> AocTests::get_all_tests()
+vector<AocTest> AocTests::get_all_tests()
 {
     return m_tests;
 }
 
-std::vector<AocTest> AocTests::filter_tests(int day, int part)
+vector<AocTest> AocTests::filter_tests(int day, int part)
 {
-    std::vector<AocTest> matching_tests;
+    vector<AocTest> matching_tests;
     
-    for (std::vector<AocTest>::iterator test_iter = m_tests.begin(); test_iter !=m_tests.end(); ++test_iter)
+    for (vector<AocTest>::iterator test_iter = m_tests.begin(); test_iter !=m_tests.end(); ++test_iter)
     {
         if ((*test_iter).matches(day, part))
         {

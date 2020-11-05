@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 /* This is the superclass for all of the daily programs.
  * It will have two functions to override - one for part 1, and one for part 2
  * each of those functions takes two arguments
@@ -18,8 +20,8 @@ class AocDay
     public:
         AocDay(int day);
         ~AocDay();
-        virtual std::string part1(std::string filename, std::vector<std::string> extra_args);
-        virtual std::string part2(std::string filename, std::vector<std::string> extra_args);
+        virtual string part1(string filename, vector<string> extra_args);
+        virtual string part2(string filename, vector<string> extra_args);
 };
 
 #endif

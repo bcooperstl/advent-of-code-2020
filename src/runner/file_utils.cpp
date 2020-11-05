@@ -6,29 +6,31 @@
 
 #include "file_utils.h"
 
+using namespace std;
+
 // Really basic way to parse a line based on delimiters. 
 // parameters:
 //  input = the input string to split. assume newline is removed, or else it will be addded to the last item
 //  delimiter = the value to split on
 //  quote = an optional parameter - a quote character to indicate a 
-std::vector<std::string> FileUtils::split_line_to_strings(std::string input, char delimiter, char quote_char, char comment_char)
+vector<string> FileUtils::split_line_to_strings(string input, char delimiter, char quote_char, char comment_char)
 {
     //TODO: Wrap this in my debug logic
-    std::cout << "original input is [" << input << "]" << std::endl;
+    cout << "original input is [" << input << "]" << endl;
 
-    std::vector<std::string> splits;
+    vector<string> splits;
     if (comment_char)
     {
-        std::size_t comment_pos = input.find(comment_char); // find the position of the comment character
+        size_t comment_pos = input.find(comment_char); // find the position of the comment character
         input = input.substr(comment_pos); // will truncate off starting at the comment character. if no comment character, this will make no changes
         //TODO: Wrap this in my debug logic
-        std::cout << "after dropping comment " << comment_char << ", input to parse is [" << input << "]" << std::endl;
+        cout << "after dropping comment " << comment_char << ", input to parse is [" << input << "]" << endl;
     }
     
     char * pos = (char *)input.c_str();
     
     bool in_quote = false;
-    std::ostringstream current;
+    ostringstream current;
     while (*pos != '\0')
     {
         if (quote_char && in_quote)
@@ -55,9 +57,9 @@ std::vector<std::string> FileUtils::split_line_to_strings(std::string input, cha
                 // second string goes from 6 to 10...construct as string(6,5)...pos wil be 11 for the comma. so 11-6=5
                 // third string goes from 12 to 16...construct as string(12,5) but need to do this out of loop as its the last string
                 //TODO: Wrap this in my debug logic
-                std::cout << "appending [" << current.str() << "] as a string" << std::endl;
+                cout << "appending [" << current.str() << "] as a string" << endl;
                 splits.push_back(current.str());
-                current = std::ostringstream();
+                current = ostringstream();
             }
             else
             {
@@ -68,62 +70,62 @@ std::vector<std::string> FileUtils::split_line_to_strings(std::string input, cha
     }
     // append the last string. pos will be pointed to the null terminator at 17, so string(12,5) would be pos(17)-start(12)
     //TODO: Wrap this in my debug logic
-    std::cout << "appending [" << current.str() << "] as the last string" << std::endl;
+    cout << "appending [" << current.str() << "] as the last string" << endl;
     splits.push_back(current.str());
     return splits;
 }
 
-bool FileUtils::read_as_list_of_strings(std::string filename, std::vector<std::string> & lines)
+bool FileUtils::read_as_list_of_strings(string filename, vector<string> & lines)
 {
-    std::ifstream infile(filename);
+    ifstream infile(filename);
     if (!infile)
     {
-        std::cerr << "*****Error opening file " << filename << std::endl;
+        cerr << "*****Error opening file " << filename << endl;
         return false;
     }
-    std::string line;
-    while (std::getline(infile, line))
+    string line;
+    while (getline(infile, line))
     {
         //TODO Add debugging logic
-        std::cout << "Read line [" << line << "] from file" << std::endl;
+        cout << "Read line [" << line << "] from file" << endl;
         lines.push_back(line);
     }
     infile.close();
     return true;
 }
 
-bool FileUtils::read_as_list_of_split_strings(std::string filename, std::vector<std::vector<std::string>> & split_strings, char delimiter, char quote_char, char comment_char)
+bool FileUtils::read_as_list_of_split_strings(string filename, vector<vector<string>> & split_strings, char delimiter, char quote_char, char comment_char)
 {
-    std::vector<std::string> lines;
+    vector<string> lines;
     if (!read_as_list_of_strings(filename, lines))
     {
         return false;
     }
-    for (std::vector<std::string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
+    for (vector<string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
     {
         split_strings.push_back(split_line_to_strings(*iter, delimiter, quote_char, comment_char));
     }
     return true;
 }
 
-bool FileUtils::read_as_list_of_split_longs(std::string filename, std::vector<std::vector<long>> & split_longs, char delimiter, char quote_char, char comment_char)
+bool FileUtils::read_as_list_of_split_longs(string filename, vector<vector<long>> & split_longs, char delimiter, char quote_char, char comment_char)
 {
-    std::vector<std::string> lines;
+    vector<string> lines;
     if (!read_as_list_of_strings(filename, lines))
     {
         return false;
     }
-    for (std::vector<std::string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
+    for (vector<string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
     {
-        std::vector<std::string> long_strings = split_line_to_strings(*iter, delimiter, quote_char, comment_char);
-        std::vector<long> longs;
-        for (std::vector<std::string>::iterator str_long_iter = long_strings.begin(); str_long_iter != long_strings.end(); ++str_long_iter)
+        vector<string> long_strings = split_line_to_strings(*iter, delimiter, quote_char, comment_char);
+        vector<long> longs;
+        for (vector<string>::iterator str_long_iter = long_strings.begin(); str_long_iter != long_strings.end(); ++str_long_iter)
         {
-            std::string str_long = *str_long_iter;
+            string str_long = *str_long_iter;
             long l;
             if (safe_strtol(str_long, l))
             {
-                std::cerr << "Error on conversion to long integer from [" << str_long << "]" << std::endl;
+                cerr << "Error on conversion to long integer from [" << str_long << "]" << endl;
                 return false;
             }
             longs.push_back(l);
@@ -133,13 +135,13 @@ bool FileUtils::read_as_list_of_split_longs(std::string filename, std::vector<st
     return true;
 }
 
-bool FileUtils::safe_strtol(std::string str_long, long & l)
+bool FileUtils::safe_strtol(string str_long, long & l)
 {
     char * endptr;
     l = strtol(str_long.c_str(), &endptr, 10);
     if (endptr != 0)
     {
-        std::cerr << "Error on conversion to long integer from [" << str_long << "]" << std::endl;
+        cerr << "Error on conversion to long integer from [" << str_long << "]" << endl;
         return false;
     }
     return true;
