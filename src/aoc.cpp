@@ -1,17 +1,28 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <unistd.h> // getopt
 
 #include "aoc_days.h"
 #include "aoc_tests.h"
+#include "file_utils.h"
 
+#define DASH_D 0x01
+#define DASH_P 0x02
+#define DASH_F 0x04
+#define DASH_T 0x08
+#define DASH_R 0x10
+
+#define OPTS_RUN_FILE (DASH_D | DASH_P | DASH_F)
+#define OPTS_RUN_TEST (DASH_D | DASH_P | DASH_T)
+#define OPTS_RUN_REGRESSION (DASH_R)
 
 void usage(string prog_name)
 {
     cerr << "Usage for " << prog_name << endl;
-    cerr << "Run one file: " << prog_name << " -d day -p part -f filename [extra_args...]" << endl;
-    cerr << "Run one day/part tests: " << prog_name << " -d day -p part -t" << endl;
-    cerr << "Run full regression test: " << prog_name << " -R" << endl;
+    cerr << "   Run one file: " << prog_name << " -d day -p part -f filename [extra_args...]" << endl;
+    cerr << "   Run one day/part tests: " << prog_name << " -d day -p part -t" << endl;
+    cerr << "   Run full regression test: " << prog_name << " -r" << endl;
     // TODO: Add debugging flags, options etc
 }
 
@@ -19,14 +30,75 @@ int main (int argc, char * argv[])
 {
     AocDays days;
     AocTests tests;
-    int day = 0;
-    int part = 0;
+    FileUtils fileutils;
+    
+    long day = 0;
+    long part = 0;
     bool regression = false;
     string filename = "";
     string result = "";
     vector<string> extra_args;
     ostringstream test_summary;
     
+    int given_opts = 0;
+    int opt;
+    
+    // getopt parsing of command line parameters
+    while ((opt = getopt(argc, argv, "d:p:f:tr")) != -1)
+    {
+        switch (opt)
+        {
+            case 'd':
+                if (!fileutils.safe_strtol(string(optarg), day))
+                {
+                    cerr << "Error parsing day [" << string(optarg) << "]" << endl;
+                    exit(8);
+                }
+                given_opts |= DASH_D;
+                break;
+            case 'p':
+                if (!fileutils.safe_strtol(string(optarg), part))
+                {
+                    cerr << "Error parsing part [" << string(optarg) << "]" << endl;
+                    exit(8);
+                }
+                given_opts |= DASH_P;
+                break;
+            case 'f':
+                filename = string(optarg);
+                given_opts |= DASH_F;
+                break;
+            case 't':
+                given_opts |= DASH_T;
+                break;
+            case 'r':
+                regression = true;
+                given_opts |= DASH_R;
+                break;
+            default:
+                cerr << "Invalid option " << opt << " given" << endl;
+                usage(argv[0]);
+                exit(8);
+                break;
+        }
+    }
+    
+    // check for valid option combination and get any extra arguments if running from a file
+    if (given_opts == OPTS_RUN_FILE)
+    {
+        for (int i=optind; i<argc; i++)
+        {
+            extra_args.push_back(string(argv[i]));
+        }
+    }
+    else if (given_opts != OPTS_RUN_TEST && given_opts != OPTS_RUN_REGRESSION)
+    {
+        cerr << "Invalid set of options given" << endl;
+        usage(argv[0]);
+        exit(8);
+    }
+    
+    // Actually do stuff
     if (filename != "")
     {
         AocDay * aoc_day = days.get_day(day);
