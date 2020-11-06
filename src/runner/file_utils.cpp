@@ -139,7 +139,7 @@ bool FileUtils::safe_strtol(string str_long, long & l)
 {
     char * endptr;
     l = strtol(str_long.c_str(), &endptr, 10);
-    if (endptr != 0)
+    if (*endptr != '\0')
     {
         cerr << "Error on conversion to long integer from [" << str_long << "]" << endl;
         return false;
