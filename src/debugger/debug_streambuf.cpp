@@ -42,12 +42,7 @@ bool DebugStreambuf::is_on()
     return m_is_on;
 }
 
-void DebugStreambuf::set_on()
+void DebugStreambuf::set_is_on(bool is_on)
 {
-    m_is_on = true;
-}
-
-void DebugStreambuf::set_off()
-{
-    m_is_on = false;
+    m_is_on = is_on;
 }

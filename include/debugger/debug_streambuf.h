@@ -17,8 +17,7 @@ public:
     DebugStreambuf(bool is_on);
     DebugStreambuf(const DebugStreambuf & other);
     bool is_on();
-    void set_on();
-    void set_off();
+    void set_is_on(bool is_on);
 };
 
 #endif

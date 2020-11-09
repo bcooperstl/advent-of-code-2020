@@ -12,8 +12,8 @@ int main(int argc, char * argv[])
     
     outOn << "This should show" << endl;
     outOff << "This should not show" << endl;
-    off.set_on();
-    on.set_off();
+    off.set_is_on(true);
+    on.set_is_on(false);
     outOff << "This should now show" << endl;
     outOn << "This should now not show" << endl;
     
