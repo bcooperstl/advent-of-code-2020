@@ -23,7 +23,6 @@ void usage(string prog_name)
     cerr << "   Run one file: " << prog_name << " -d day -p part -f filename [extra_args...]" << endl;
     cerr << "   Run one day/part tests: " << prog_name << " -d day -p part -t" << endl;
     cerr << "   Run full regression test: " << prog_name << " -r" << endl;
-    // TODO: Add debugging flags, options etc
 }
 
 int main (int argc, char * argv[])

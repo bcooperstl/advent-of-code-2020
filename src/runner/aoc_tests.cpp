@@ -33,7 +33,6 @@ void AocTests::load_tests()
         vector<string> test_parameters = *test_iter;
         vector<string>::iterator parm_iter=test_parameters.begin();
         // format is day,part,filename,expected[,...extra args]
-        // TODO: Add debugging library
         long day, part;
         string filename, expected;
         vector<string> extra_args;

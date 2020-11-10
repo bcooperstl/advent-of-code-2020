@@ -15,16 +15,18 @@ using namespace std;
 //  quote = an optional parameter - a quote character to indicate a 
 vector<string> FileUtils::split_line_to_strings(string input, char delimiter, char quote_char, char comment_char)
 {
-    //TODO: Wrap this in my debug logic
+#ifdef DEBUG_RUNNER
     cout << "original input is [" << input << "]" << endl;
+#endif
 
     vector<string> splits;
     if (comment_char)
     {
         size_t comment_pos = input.find(comment_char); // find the position of the comment character
         input = input.substr(comment_pos); // will truncate off starting at the comment character. if no comment character, this will make no changes
-        //TODO: Wrap this in my debug logic
+#ifdef DEBUG_RUNNER
         cout << "after dropping comment " << comment_char << ", input to parse is [" << input << "]" << endl;
+#endif
     }
     
     char * pos = (char *)input.c_str();
@@ -56,8 +58,9 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
                 // first string goes from 0 to 4...construct as string(0,5). pos will be 5 for the comma. so 5-0=5
                 // second string goes from 6 to 10...construct as string(6,5)...pos wil be 11 for the comma. so 11-6=5
                 // third string goes from 12 to 16...construct as string(12,5) but need to do this out of loop as its the last string
-                //TODO: Wrap this in my debug logic
+#ifdef DEBUG_RUNNER
                 cout << "appending [" << current.str() << "] as a string" << endl;
+#endif
                 splits.push_back(current.str());
                 current = ostringstream();
             }
@@ -86,8 +89,9 @@ bool FileUtils::read_as_list_of_strings(string filename, vector<string> & lines)
     string line;
     while (getline(infile, line))
     {
-        //TODO Add debugging logic
+#ifdef DEBUG_RUNNER
         cout << "Read line [" << line << "] from file" << endl;
+#endif
         lines.push_back(line);
     }
     infile.close();
