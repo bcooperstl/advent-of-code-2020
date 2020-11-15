@@ -10,22 +10,20 @@ using namespace std;
 
 AocTests::AocTests()
 {
-    load_tests();
 }
 
 AocTests::~AocTests()
 {
 }
 
-void AocTests::load_tests()
+bool AocTests::load_tests(string filename)
 {
     vector<vector<string>> test_index_contents;
     FileUtils fileutils;
-    string index_file = string(DATA_DIR)+string(TEST_INDEX_FILE);
-    if (!fileutils.read_as_list_of_split_strings(index_file, test_index_contents, TEST_INDEX_DELIM, TEST_INDEX_QUOTE, TEST_INDEX_COMMENT))
+    if (!fileutils.read_as_list_of_split_strings(filename, test_index_contents, TEST_INDEX_DELIM, TEST_INDEX_QUOTE, TEST_INDEX_COMMENT))
     {
-        cerr << "Error reading test index file " << index_file << endl;
-        return;
+        cerr << "Error reading test index file " << filename << endl;
+        return false;
     }
     
     for (vector<vector<string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
@@ -39,13 +37,13 @@ void AocTests::load_tests()
         if (!fileutils.safe_strtol(*parm_iter, day))
         {
             cerr << "Error parsing day from " << *parm_iter << endl;
-            return;
+            return false;
         }
         ++parm_iter;
         if (!fileutils.safe_strtol(*parm_iter, part))
         {
             cerr << "Error parsing part from " << *parm_iter << endl;
-            return;
+            return false;
         }
         ++parm_iter;
         filename = *parm_iter;
@@ -59,6 +57,7 @@ void AocTests::load_tests()
         }
         m_tests.push_back(AocTest(day, part, filename, expected, extra_args));
     }
+    return true;
 }
 
 vector<AocTest> AocTests::get_all_tests()
