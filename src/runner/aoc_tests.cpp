@@ -29,6 +29,7 @@ bool AocTests::load_tests(string filename)
     for (vector<vector<string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
     {
         vector<string> test_parameters = *test_iter;
+        cerr << "line has " << test_parameters.size() << " elements" << endl;
         vector<string>::iterator parm_iter=test_parameters.begin();
         // format is day,part,filename,expected[,...extra args]
         long day, part;

@@ -12,7 +12,8 @@ using namespace std;
 // parameters:
 //  input = the input string to split. assume newline is removed, or else it will be addded to the last item
 //  delimiter = the value to split on
-//  quote = an optional parameter - a quote character to indicate a 
+//  quote = an optional parameter - a quote character to indicate a that quoted sections will be used and ignore delimiters
+//  comment_char = an optional parameter - if this is the first character in a line, that line is treated as a comment and skipped.
 vector<string> FileUtils::split_line_to_strings(string input, char delimiter, char quote_char, char comment_char)
 {
 #ifdef DEBUG_RUNNER
@@ -22,6 +23,14 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
     vector<string> splits;
     
     char * pos = (char *)input.c_str();
+    
+    if (comment_char && *pos == comment_char)
+    {
+#ifdef DEBUG_RUNNER
+        cout << "Comment line found" << endl;
+#endif
+        return splits;
+    }
     
     bool in_quote = false;
     ostringstream current;
@@ -43,11 +52,6 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
             if (quote_char && *pos == quote_char)
             {
                 in_quote = true;
-            }
-            else if (comment_char && *pos == comment_char)
-            {
-                // have a non-quoted comment character. time to stop
-                break;
             }
             else if (*pos == delimiter)
             {
@@ -105,7 +109,9 @@ bool FileUtils::read_as_list_of_split_strings(string filename, vector<vector<str
     }
     for (vector<string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
     {
-        split_strings.push_back(split_line_to_strings(*iter, delimiter, quote_char, comment_char));
+        vector<string> results = split_line_to_strings(*iter, delimiter, quote_char, comment_char);
+        if (results.size() > 0)
+            split_strings.push_back(results);
     }
     return true;
 }
