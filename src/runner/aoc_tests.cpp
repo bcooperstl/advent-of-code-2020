@@ -16,9 +16,28 @@ AocTests::~AocTests()
 {
 }
 
+string AocTests::base_directory(string filename)
+{
+    size_t found;
+    cout << "Splitting: " << filename << endl;
+    found=filename.find_last_of("/\\");
+    if (found != string::npos) // found a directory character. return everything from the start through that character
+    {
+        return filename.substr(0,found+1);
+    }
+    else // no directory character found. just return an empty string to indicate the current directory
+    {
+        return "";
+    }
+}
+
 bool AocTests::load_tests(string filename)
 {
     vector<vector<string>> test_index_contents;
+    string basedir = base_directory(filename);
+#ifdef DEBUG_RUNNER
+    cout << "The base dicectory for test files is " << basedir << endl;
+#endif
     FileUtils fileutils;
     if (!fileutils.read_as_list_of_split_strings(filename, test_index_contents, TEST_INDEX_DELIM, TEST_INDEX_QUOTE, TEST_INDEX_COMMENT))
     {
@@ -29,10 +48,11 @@ bool AocTests::load_tests(string filename)
     for (vector<vector<string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
     {
         vector<string> test_parameters = *test_iter;
+        cerr << "line has " << test_parameters.size() << " elements" << endl;
         vector<string>::iterator parm_iter=test_parameters.begin();
         // format is day,part,filename,expected[,...extra args]
         long day, part;
-        string filename, expected;
+        string filename, full_filename, expected;
         vector<string> extra_args;
         if (!fileutils.safe_strtol(*parm_iter, day))
         {
@@ -47,6 +67,10 @@ bool AocTests::load_tests(string filename)
         }
         ++parm_iter;
         filename = *parm_iter;
+        full_filename = basedir + filename;
+#ifdef DEBUG_RUNNER
+        cout << "The full path to " << filename << " is " << full_filename << endl;
+#endif
         ++parm_iter;
         expected = *parm_iter;
         ++parm_iter;
@@ -55,7 +79,7 @@ bool AocTests::load_tests(string filename)
             extra_args.push_back(*parm_iter);
             parm_iter++;
         }
-        m_tests.push_back(AocTest(day, part, filename, expected, extra_args));
+        m_tests.push_back(AocTest(day, part, full_filename, expected, extra_args));
     }
     return true;
 }

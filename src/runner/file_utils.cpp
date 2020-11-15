@@ -12,7 +12,8 @@ using namespace std;
 // parameters:
 //  input = the input string to split. assume newline is removed, or else it will be addded to the last item
 //  delimiter = the value to split on
-//  quote = an optional parameter - a quote character to indicate a 
+//  quote = an optional parameter - a quote character to indicate a that quoted sections will be used and ignore delimiters
+//  comment_char = an optional parameter - if this is the first character in a line, that line is treated as a comment and skipped.
 vector<string> FileUtils::split_line_to_strings(string input, char delimiter, char quote_char, char comment_char)
 {
 #ifdef DEBUG_RUNNER
@@ -20,16 +21,16 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
 #endif
 
     vector<string> splits;
-    if (comment_char)
-    {
-        size_t comment_pos = input.find(comment_char); // find the position of the comment character
-        input = input.substr(comment_pos); // will truncate off starting at the comment character. if no comment character, this will make no changes
-#ifdef DEBUG_RUNNER
-        cout << "after dropping comment " << comment_char << ", input to parse is [" << input << "]" << endl;
-#endif
-    }
     
     char * pos = (char *)input.c_str();
+    
+    if (comment_char && *pos == comment_char)
+    {
+#ifdef DEBUG_RUNNER
+        cout << "Comment line found" << endl;
+#endif
+        return splits;
+    }
     
     bool in_quote = false;
     ostringstream current;
@@ -72,8 +73,9 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
         }
     }
     // append the last string. pos will be pointed to the null terminator at 17, so string(12,5) would be pos(17)-start(12)
-    //TODO: Wrap this in my debug logic
+#ifdef DEBUG_RUNNER
     cout << "appending [" << current.str() << "] as the last string" << endl;
+#endif
     splits.push_back(current.str());
     return splits;
 }
@@ -107,7 +109,9 @@ bool FileUtils::read_as_list_of_split_strings(string filename, vector<vector<str
     }
     for (vector<string>::iterator iter = lines.begin(); iter != lines.end(); ++iter)
     {
-        split_strings.push_back(split_line_to_strings(*iter, delimiter, quote_char, comment_char));
+        vector<string> results = split_line_to_strings(*iter, delimiter, quote_char, comment_char);
+        if (results.size() > 0)
+            split_strings.push_back(results);
     }
     return true;
 }
