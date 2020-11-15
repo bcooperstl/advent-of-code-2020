@@ -1,5 +1,5 @@
 DEBUG=
-#DEBUG+= -DDEBUG_RUNNER
+DEBUG+= -DDEBUG_RUNNER
 
 CPPFLAGS=-g ${DEBUG} -Iinclude/common -Iinclude/runner -Iinclude/solutions
 
@@ -40,9 +40,16 @@ build/solutions/aoc_days.o: src/solutions/aoc_days.cpp  \
 	include/common/constants.h
 	g++ ${CPPFLAGS} -o build/solutions/aoc_days.o -c src/solutions/aoc_days.cpp
 
+build/solutions/aoc_day_0.o: src/solutions/aoc_day_0.cpp  \
+	include/solutions/aoc_day_0.h \
+	include/solutions/aoc_day.h \
+	include/common/constants.h
+	g++ ${CPPFLAGS} -o build/solutions/aoc_day_0.o -c src/solutions/aoc_day_0.cpp
+
 bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
-	build/solutions/aoc_days.o
-	ar rcs bin/lib/libsolutions.a build/solutions/aoc_day.o build/solutions/aoc_days.o
+	build/solutions/aoc_days.o \
+	build/solutions/aoc_day_0.o
+	ar rcs bin/lib/libsolutions.a build/solutions/aoc_day.o build/solutions/aoc_days.o build/solutions/aoc_day_0.o
 
 # The aoc executable
 build/aoc.o: src/aoc.cpp  \

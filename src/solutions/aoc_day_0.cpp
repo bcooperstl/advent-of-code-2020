@@ -65,3 +65,16 @@ string AocDay0::part1(string filename, vector<string> extra_args)
     out << sum;
     return out.str();
 }
+
+string AocDay0::part2(string filename, vector<string> extra_args)
+{
+    vector<long> data = read_input(filename);
+    long sum = 0;
+    for (vector<long>::iterator iter = data.begin(); iter != data.end(); ++iter)
+    {
+        sum-=*iter;
+    }
+    ostringstream out;
+    out << sum;
+    return out.str();
+}
