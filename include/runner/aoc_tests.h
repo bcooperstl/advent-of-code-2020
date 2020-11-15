@@ -12,6 +12,7 @@ class AocTests
 {
     private:
         vector<AocTest> m_tests;
+        string base_directory(string filename);
     public:
         AocTests();
         ~AocTests();
