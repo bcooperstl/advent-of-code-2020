@@ -12,10 +12,10 @@ class AocTests
 {
     private:
         vector<AocTest> m_tests;
-        void load_tests();
     public:
         AocTests();
         ~AocTests();
+        bool load_tests(string filename);
         vector<AocTest> get_all_tests();
         vector<AocTest> filter_tests(int day, int part);
 };

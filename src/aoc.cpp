@@ -21,8 +21,8 @@ void usage(string prog_name)
 {
     cerr << "Usage for " << prog_name << endl;
     cerr << "   Run one file: " << prog_name << " -d day -p part -f filename [extra_args...]" << endl;
-    cerr << "   Run one day/part tests: " << prog_name << " -d day -p part -t" << endl;
-    cerr << "   Run full regression test: " << prog_name << " -r" << endl;
+    cerr << "   Run one day/part tests: " << prog_name << " -d day -p part -t test_index_filename" << endl;
+    cerr << "   Run full regression test: " << prog_name << " -r test_index_filename" << endl;
 }
 
 int main (int argc, char * argv[])
@@ -35,6 +35,7 @@ int main (int argc, char * argv[])
     long part = 0;
     bool regression = false;
     string filename = "";
+    string test_filename = "";
     string result = "";
     vector<string> extra_args;
     ostringstream test_summary;
@@ -43,7 +44,7 @@ int main (int argc, char * argv[])
     int opt;
     
     // getopt parsing of command line parameters
-    while ((opt = getopt(argc, argv, "d:p:f:tr")) != -1)
+    while ((opt = getopt(argc, argv, "d:p:f:t:r:")) != -1)
     {
         switch (opt)
         {
@@ -68,9 +69,11 @@ int main (int argc, char * argv[])
                 given_opts |= DASH_F;
                 break;
             case 't':
+                test_filename = string(optarg);
                 given_opts |= DASH_T;
                 break;
             case 'r':
+                test_filename = string(optarg);
                 regression = true;
                 given_opts |= DASH_R;
                 break;
@@ -124,6 +127,11 @@ int main (int argc, char * argv[])
     else // no filename; assume some type of testing mode
     {
         vector<AocTest> tests_to_run;
+        if (!tests.load_tests(test_filename))
+        {
+            cerr << "Error loading from test indext file " << test_filename << endl;
+            exit(8);
+        }
         if (regression)
         {
             cout << "Running full regression test for all days and parts!" << endl;
