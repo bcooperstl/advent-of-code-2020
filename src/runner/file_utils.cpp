@@ -20,14 +20,6 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
 #endif
 
     vector<string> splits;
-    if (comment_char)
-    {
-        size_t comment_pos = input.find(comment_char); // find the position of the comment character
-        input = input.substr(comment_pos); // will truncate off starting at the comment character. if no comment character, this will make no changes
-#ifdef DEBUG_RUNNER
-        cout << "after dropping comment " << comment_char << ", input to parse is [" << input << "]" << endl;
-#endif
-    }
     
     char * pos = (char *)input.c_str();
     
@@ -52,6 +44,11 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
             {
                 in_quote = true;
             }
+            else if (comment_char && *pos == comment_char)
+            {
+                // have a non-quoted comment character. time to stop
+                break;
+            }
             else if (*pos == delimiter)
             {
                 // ABCDE,ABCDE,ABCDE
@@ -72,8 +69,9 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
         }
     }
     // append the last string. pos will be pointed to the null terminator at 17, so string(12,5) would be pos(17)-start(12)
-    //TODO: Wrap this in my debug logic
+#ifdef DEBUG_RUNNER
     cout << "appending [" << current.str() << "] as the last string" << endl;
+#endif
     splits.push_back(current.str());
     return splits;
 }
