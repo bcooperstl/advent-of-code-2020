@@ -1,0 +1,12 @@
+#format is day,part,filename,expected result,any extra arguments (comma-separated)
+0,1,test_cases/day0_test1.txt,3
+0,1,test_cases/day0_test2.txt,3
+#This is a comment
+0,1,test_cases/day0_test3.txt,0
+0,1,test_cases/day0_test4.txt,-6
+0,1,day0_input.txt,569
+0,2,test_cases/day0_test1.txt,-3
+0,2,test_cases/day0_test2.txt,-3
+0,2,test_cases/day0_test3.txt,0
+0,2,test_cases/day0_test4.txt,6
+0,2,day0_input.txt,-569
