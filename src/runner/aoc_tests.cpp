@@ -19,7 +19,6 @@ AocTests::~AocTests()
 string AocTests::base_directory(string filename)
 {
     size_t found;
-    cout << "Splitting: " << filename << endl;
     found=filename.find_last_of("/\\");
     if (found != string::npos) // found a directory character. return everything from the start through that character
     {
@@ -48,7 +47,6 @@ bool AocTests::load_tests(string filename)
     for (vector<vector<string>>::iterator test_iter = test_index_contents.begin(); test_iter != test_index_contents.end(); ++test_iter)
     {
         vector<string> test_parameters = *test_iter;
-        cerr << "line has " << test_parameters.size() << " elements" << endl;
         vector<string>::iterator parm_iter=test_parameters.begin();
         // format is day,part,filename,expected[,...extra args]
         long day, part;
