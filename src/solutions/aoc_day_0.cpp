@@ -2,6 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 #include "aoc_day_0.h"
 #include "file_utils.h"
@@ -29,26 +30,9 @@ vector<long> AocDay0::read_input(string filename)
     for (vector<string>::iterator iter = raw_lines.begin(); iter != raw_lines.end(); ++iter)
     {
         long l;
-        if ((*iter)[0]=='+')
-        {
-            if (!fileutils.safe_strtol((*iter).substr(1), l))
-            {
-                cerr << "Error converting " << (*iter).substr(1) << " to long" << endl;
-                data.clear();
-                return data;
-            }
-            data.push_back(l);
-        }
-        else
-        {
-            if (!fileutils.safe_strtol((*iter), l))
-            {
-                cerr << "Error converting " << (*iter) << " to long" << endl;
-                data.clear();
-                return data;
-            }
-            data.push_back(l);
-        }
+        string to_convert = *iter;
+        l = strtol(to_convert.c_str(), NULL, 10);
+        data.push_back(l);
     }
     return data;
 }

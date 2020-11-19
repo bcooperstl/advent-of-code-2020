@@ -54,30 +54,29 @@ bool AocTests::load_tests(string filename)
         long day, part;
         string filename, full_filename, expected;
         vector<string> extra_args;
-        if (!fileutils.safe_strtol(*parm_iter, day))
-        {
-            cerr << "Error parsing day from " << *parm_iter << endl;
-            return false;
-        }
+
+        day = strtol((*parm_iter).c_str(), NULL, 10);
         ++parm_iter;
-        if (!fileutils.safe_strtol(*parm_iter, part))
-        {
-            cerr << "Error parsing part from " << *parm_iter << endl;
-            return false;
-        }
+
+        part = strtol((*parm_iter).c_str(), NULL, 10);
         ++parm_iter;
+
         filename = *parm_iter;
         full_filename = basedir + filename;
 #ifdef DEBUG_RUNNER
         cout << "The full path to " << filename << " is " << full_filename << endl;
 #endif
         ++parm_iter;
+
         expected = *parm_iter;
         ++parm_iter;
         while (parm_iter != test_parameters.end())
         {
+#ifdef DEBUG_RUNNER
+            cout << "Adding extra parm " << *parm_iter << endl;
+#endif
             extra_args.push_back(*parm_iter);
-            parm_iter++;
+            ++parm_iter;
         }
         m_tests.push_back(AocTest(day, part, full_filename, expected, extra_args));
     }
