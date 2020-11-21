@@ -49,19 +49,11 @@ int main (int argc, char * argv[])
         switch (opt)
         {
             case 'd':
-                if (!fileutils.safe_strtol(string(optarg), day))
-                {
-                    cerr << "Error parsing day [" << string(optarg) << "]" << endl;
-                    exit(8);
-                }
+                day = strtol(optarg, NULL, 10);
                 given_opts |= DASH_D;
                 break;
             case 'p':
-                if (!fileutils.safe_strtol(string(optarg), part))
-                {
-                    cerr << "Error parsing part [" << string(optarg) << "]" << endl;
-                    exit(8);
-                }
+                part = strtol(optarg, NULL, 10);
                 given_opts |= DASH_P;
                 break;
             case 'f':

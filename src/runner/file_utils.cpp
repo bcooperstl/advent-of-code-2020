@@ -41,10 +41,13 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
             if (*pos == quote_char)
             {
                 in_quote = false;
+#ifdef DEBUG_RUNNER
+                cout << "Leaving quotes" << endl;
+#endif
             }
             else
             {
-                current << *pos;
+                current << (*pos);
             }
         }
         else
@@ -52,6 +55,9 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
             if (quote_char && *pos == quote_char)
             {
                 in_quote = true;
+#ifdef DEBUG_RUNNER
+                cout << "In quotes" << endl;
+#endif
             }
             else if (*pos == delimiter)
             {
@@ -69,8 +75,8 @@ vector<string> FileUtils::split_line_to_strings(string input, char delimiter, ch
             {
                 current << (*pos);
             }
-            pos++;
         }
+        pos++;
     }
     // append the last string. pos will be pointed to the null terminator at 17, so string(12,5) would be pos(17)-start(12)
 #ifdef DEBUG_RUNNER
@@ -130,27 +136,10 @@ bool FileUtils::read_as_list_of_split_longs(string filename, vector<vector<long>
         for (vector<string>::iterator str_long_iter = long_strings.begin(); str_long_iter != long_strings.end(); ++str_long_iter)
         {
             string str_long = *str_long_iter;
-            long l;
-            if (safe_strtol(str_long, l))
-            {
-                cerr << "Error on conversion to long integer from [" << str_long << "]" << endl;
-                return false;
-            }
-            longs.push_back(l);
+            longs.push_back(strtol(str_long.c_str(), NULL, 10));
         }
         split_longs.push_back(longs);
     }
     return true;
 }
 
-bool FileUtils::safe_strtol(string str_long, long & l)
-{
-    char * endptr;
-    l = strtol(str_long.c_str(), &endptr, 10);
-    if (*endptr != '\0')
-    {
-        cerr << "Error on conversion to long integer from [" << str_long << "]" << endl;
-        return false;
-    }
-    return true;
-}
