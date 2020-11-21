@@ -52,6 +52,15 @@ string AocDay0::part1(string filename, vector<string> extra_args)
 
 string AocDay0::part2(string filename, vector<string> extra_args)
 {
+    if (extra_args.size() > 0)
+    {
+        cout << "There are " << extra_args.size() << " extra arguments given:" << endl;
+        for (vector<string>::iterator iter = extra_args.begin(); iter != extra_args.end(); ++iter)
+        {
+            cout << "[" << *iter << "]" << endl;
+        }
+    }
+    
     vector<long> data = read_input(filename);
     long sum = 0;
     for (vector<long>::iterator iter = data.begin(); iter != data.end(); ++iter)
