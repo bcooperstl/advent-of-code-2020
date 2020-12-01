@@ -1,28 +1,28 @@
-* Day 1, Part 1 *
+# Day 1, Part 1 #
 
-** Requirements **
+## Requirements ##
 
 Given a set of integer inputs, find the two that sum to 2020. Multiply those two numbers together and return the result.
 
-*** Input Format ***
+### Input Format ###
 
 List of integers, given one integer per line
 
-*** Output Format ***
+### Output Format ###
 
 Single integer
 
-** Test Cases **
+## Test Cases ##
 
-*** Given Test Cases ***
+### Given Test Cases ###
 
 There is one test case given in the problem statement. Nothing special about it.
 
-*** Custom Test Cases ***
+### Custom Test Cases ###
 
 None Needed
 
-** Approach **
+## Approach ##
 
 Pretty straightforward algorithm with two nested for loops. 
 
@@ -31,7 +31,7 @@ Pretty straightforward algorithm with two nested for loops.
     - For j iterating from i + 1 to the end of the list
         - If i + j equals 2020, return i * j
 
-** Things I learned **
+## Things I learned ##
 
 I've been working with iterators more throughout the Advent Of Code template that I created, instead of just using array indices into vectors.
 
