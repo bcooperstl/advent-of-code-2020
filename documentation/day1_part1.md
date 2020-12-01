@@ -16,7 +16,7 @@ Single integer
 
 ### Given Test Cases ###
 
-There is one test case given in the problem statement. Nothing special about it.
+There is [one test case](data/test_cases/day1_test1.txt) given in the problem statement. Nothing special about it.
 
 ### Custom Test Cases ###
 
