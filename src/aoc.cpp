@@ -43,6 +43,9 @@ int main (int argc, char * argv[])
     int given_opts = 0;
     int opt;
     
+    int num_passed_tests = 0;
+    int num_failed_tests = 0;
+    
     // getopt parsing of command line parameters
     while ((opt = getopt(argc, argv, "d:p:f:t:r:")) != -1)
     {
@@ -159,13 +162,20 @@ int main (int argc, char * argv[])
             if (result == test.get_expected_result())
             {
                 test_summary << "++Day " << test.get_day() << " Part " << test.get_part() << "-" << test.get_filename() << " passed with result " << result << endl;
+                num_passed_tests++;
             }
             else
             {
                 test_summary << "--Day " << test.get_day() << " Part " << test.get_part() << "-" << test.get_filename() << " FAILED expected=" << test.get_expected_result() << " actual=" << result << endl;
+                num_failed_tests++;
             }
         }
         cout << test_summary.str();
+        cout << "++++++" << num_passed_tests << " of " << num_passed_tests + num_failed_tests << " tests passed++++++" << endl;
+        if (num_failed_tests > 0)
+        {
+            cout << "------" << num_failed_tests << " of " << num_passed_tests + num_failed_tests << " TESTS FAILED------" << endl;
+        }
     }
     return 0;
 }
