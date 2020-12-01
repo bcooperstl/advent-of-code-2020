@@ -60,3 +60,30 @@ string AocDay1::part1(string filename, vector<string> extra_args)
     out << product;
     return out.str();
 }
+
+string AocDay1::part2(string filename, vector<string> extra_args)
+{
+    vector<long> entries = read_input(filename);
+    long product = 0;
+    for (vector<long>::iterator i = entries.begin(); i != entries.end(); ++i)
+    {
+        for (vector<long>::iterator j = next(i); j != entries.end(); ++j)
+        {
+            for (vector<long>::iterator k = next(j); k != entries.end(); ++k)
+            {
+                if ((*i)+(*j)+(*k) == 2020)
+                {
+                    product = (*i) * (*j) * (*k);
+                    break;
+                }
+            }
+        }
+        if (product != 0)
+        {
+            break;
+        }
+    }
+    ostringstream out;
+    out << product;
+    return out.str();
+}
