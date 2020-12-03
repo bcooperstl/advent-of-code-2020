@@ -7,11 +7,12 @@ class AocDay3 : public AocDay
 {
     private:
         vector<string> read_input(string filename);
+        int traverse_map(vector<string> map, int row_offset, int col_offset);
     public:
         AocDay3();
         ~AocDay3();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
