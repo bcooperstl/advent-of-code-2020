@@ -32,6 +32,26 @@ vector<string> AocDay3::read_input(string filename)
     return raw_lines;
 }
 
+int AocDay3::traverse_map(vector<string> map, int row_offset, int col_offset)
+{
+    int height = map.size();
+    int width = map[0].length();
+    int row = 0;
+    int col = 0;
+    int trees = 0;
+
+    while (row < height)
+    {
+        if (map[row][col] == TREE)
+        {
+            trees++;
+        }
+        row+=row_offset;
+        col = ((col + col_offset) % width);
+    }
+    return trees;
+}
+
 string AocDay3::part1(string filename, vector<string> extra_args)
 {
 /* Planned approach:
@@ -48,23 +68,50 @@ string AocDay3::part1(string filename, vector<string> extra_args)
     
     vector<string> map = read_input(filename);
     
-    int height = map.size();
-    int width = map[0].length();
-    int row = 0;
-    int col = 0;
-    int trees = 0;
-    
-    while (row < height)
-    {
-        if (map[row][col] == TREE)
-        {
-            trees++;
-        }
-        row++;
-        col = ((col + 3) % width);
-    }
+    int trees = traverse_map(map, 1, 3); // down 1, right 3
     
     ostringstream out;
     out << trees;
+    return out.str();
+}
+
+string AocDay3::part2(string filename, vector<string> extra_args)
+{
+/* Planned approach:
+   * Read in the input as a list of strings as the map.
+   * Set the tree product to 1
+   * For each of the 5 slopes:
+       * Call the traversal function with the map, row_increment and column_increment
+       * Muliple the tree_product by the result of that function.
+   * Return the tree product.
+*/
+
+    vector<string> map = read_input(filename);
+    
+    long trees;
+    long tree_product = 1;
+    
+    trees = traverse_map(map, 1, 1);
+    cout << "Right 1, down 1 has " << trees << " trees" << endl;
+    tree_product *= trees;
+    
+    trees = traverse_map(map, 1, 3);
+    cout << "Right 3, down 1 has " << trees << " trees" << endl;
+    tree_product *= trees;
+    
+    trees = traverse_map(map, 1, 5);
+    cout << "Right 5, down 1 has " << trees << " trees" << endl;
+    tree_product *= trees;
+    
+    trees = traverse_map(map, 1, 7);
+    cout << "Right 7, down 1 has " << trees << " trees" << endl;
+    tree_product *= trees;
+    
+    trees = traverse_map(map, 2, 1);
+    cout << "Right 1, down 2 has " << trees << " trees" << endl;
+    tree_product *= trees;
+    
+    ostringstream out;
+    out << tree_product;
     return out.str();
 }
