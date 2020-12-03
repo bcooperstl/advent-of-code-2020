@@ -24,7 +24,7 @@ An integer - the number of tree encountered on the journey.
 
 ### Given Test Cases ###
 
-There is [one test case](../data/test_cases/day2_test1.txt) given. I don't anticipate needing other test cases.
+There is [one test case](../data/test_cases/day3_test1.txt) given. I don't anticipate needing other test cases.
 
 ### Custom Test Cases ###
 
