@@ -16,3 +16,10 @@
 4,2,test_cases/day4_test2.txt,4
 4,2,test_cases/day4_test3.txt,0
 4,2,day4_input.txt,127
+#First 4 are single-example test cases
+5,1,test_cases/day5_single1.txt,357
+5,1,test_cases/day5_single2.txt,567
+5,1,test_cases/day5_single3.txt,119
+5,1,test_cases/day5_single4.txt,820
+#Now a full test case with multiple entries
+5,1,test_cases/day5_test1.txt,820
