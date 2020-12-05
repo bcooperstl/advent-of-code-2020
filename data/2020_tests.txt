@@ -23,3 +23,4 @@
 5,1,test_cases/day5_single4.txt,820
 #Now a full test case with multiple entries
 5,1,test_cases/day5_test1.txt,820
+5,1,day5_input.txt,930
