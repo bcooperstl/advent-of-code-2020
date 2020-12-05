@@ -37,6 +37,18 @@ bool PassportData::isValid()
     return true;
 }
 
+// four digits; at least 1920 and at most 2002
+bool BirthYearValidator::isValidData(string input)
+{
+    if (input.length() != 4)
+    {
+        return false;
+    }
+    long year = strtol(input.c_str(), NULL, 10);
+    return (year >= 1920 && year <= 2002);
+}
+
+
 AocDay4::AocDay4():AocDay(4)
 {
 }

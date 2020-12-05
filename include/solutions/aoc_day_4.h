@@ -19,6 +19,18 @@ class PassportData
         bool isValid();
 };
 
+class AttributeValidator
+{
+    public:
+        virtual bool isValidData(string input) = 0;
+};
+
+class BirthYearValidator : public AttributeValidator
+{
+    public:
+        bool isValidData(string input);
+};
+
 class AocDay4 : public AocDay
 {
     private:
