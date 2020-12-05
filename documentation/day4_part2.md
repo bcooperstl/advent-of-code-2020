@@ -26,11 +26,11 @@ An integer - the number of valid passport records in the input file
 
 ### Given Test Cases ###
 
-I created a [test case](../data/test_cases/day4_test1.txt) from the four valid and four invalid examples provided. I don't anticipate needing other test cases.
+I created a [test case](../data/test_cases/day4_test2.txt) from the four valid and four invalid examples provided.
 
 ### Custom Test Cases ###
 
-None Needed
+I created a [custom test case](../data/test_cases/day4_test3.txt) with all invalid data elements using the last valid example and changing items. Wanted to test that all validators could fail.
 
 ## Approach ##
 
@@ -42,4 +42,8 @@ None Needed
 ## Things I learned ##
 
 Having some fun with polymorphism for the AttributeValidators. I thought this was a better way to go about it than function pointers.
+
+I realized as I was programming that I neglected to originally include a way to map the AttributeValidators to a field, so I needed to add a m_key attribute to them.
+
+This would have taken a bit less time had I just hardcoded a single validation routine, but this was fun this way.
 
