@@ -10,3 +10,6 @@
 3,1,test_cases/day3_test1.txt,7
 3,1,day3_input.txt,294
 3,2,test_cases/day3_test1.txt,336
+3,2,day3_input.txt,5774564250
+4,1,test_cases/day4_test1.txt,2
+4,1,day4_input.txt,219
