@@ -87,7 +87,7 @@ bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_day_2.o \
 	build/solutions/aoc_day_3.o \
 	build/solutions/aoc_day_4.o \
-	build/solutions/aoc_day_4.o \
+	build/solutions/aoc_day_5.o \
 	build/solutions/aoc_days.o
 	ar rcs bin/lib/libsolutions.a build/solutions/aoc_day.o build/solutions/aoc_days.o build/solutions/aoc_day_0.o build/solutions/aoc_day_1.o build/solutions/aoc_day_2.o build/solutions/aoc_day_3.o build/solutions/aoc_day_4.o build/solutions/aoc_day_5.o
 
