@@ -25,3 +25,6 @@
 5,1,test_cases/day5_test1.txt,820
 5,1,day5_input.txt,930
 5,2,day5_input.txt,515
+6,1,test_cases/day6_test1.txt,11
+6,1,test_cases/day6_test2.txt,6
+6,1,day6_input.txt,6930
