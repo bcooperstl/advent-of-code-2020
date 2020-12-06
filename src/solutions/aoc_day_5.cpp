@@ -82,3 +82,36 @@ string AocDay5::part1(string filename, vector<string> extra_args)
     out << max_seat_id;
     return out.str();
 }
+
+string AocDay5::part2(string filename, vector<string> extra_args)
+{
+    vector<string> boarding_passes = read_input(filename);
+    vector<long> seat_ids;
+    
+    for (vector<string>::iterator bp_iter = boarding_passes.begin(); bp_iter != boarding_passes.end(); ++bp_iter)
+    {
+        string bp = *bp_iter;
+        int row = calculate_row(bp);
+        int column = calculate_column(bp);
+        int seat_id = calculate_seat_id(row, column);
+        seat_ids.push_back(seat_id);
+    }
+    
+    sort(seat_ids.begin(), seat_ids.end());
+    
+    int previous = seat_ids[0];
+    int found = 0;
+    for (int i=1; i<seat_ids.size(); i++)
+    {
+        if (seat_ids[i] != (previous + 1))
+        {
+            found = previous + 1;
+            break;
+        }
+        previous = seat_ids[i];
+    }
+    
+    ostringstream out;
+    out << found;
+    return out.str();
+}
