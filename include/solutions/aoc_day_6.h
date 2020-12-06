@@ -23,13 +23,16 @@ class Group
 {
     private:
         vector<Person *> m_persons;
-        uint32_t m_group_yeses;
+        uint32_t m_group_any_yeses;
+        uint32_t m_group_all_yeses;
     public:
         Group();
         ~Group();
         void add_person(Person * person);
-        uint32_t get_group_yeses();
-        int get_yes_count();
+        uint32_t get_group_any_yeses();
+        uint32_t get_group_all_yeses();
+        int get_any_yes_count();
+        int get_all_yes_count();
 };
 
 class AocDay6 : public AocDay
@@ -40,7 +43,7 @@ class AocDay6 : public AocDay
         AocDay6();
         ~AocDay6();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
