@@ -11,13 +11,15 @@
 
 using namespace std;
 
-#define YESES_INIT 0
+#define ANY_YESES_INIT 0
+#define ALL_YESES_INIT 0xffffffff
+#define PERSON_YESES_INIT 0
 #define YES 0x01
 
 Person::Person(string response)
 {
     m_response = response;
-    m_yeses = YESES_INIT;
+    m_yeses = PERSON_YESES_INIT;
     
     for (int i=0; i<response.length(); i++)
     {
@@ -46,7 +48,8 @@ uint32_t Person::get_yeses()
 
 Group::Group()
 {
-    m_group_yeses = YESES_INIT;
+    m_group_any_yeses = ANY_YESES_INIT;
+    m_group_all_yeses = ALL_YESES_INIT;
 }
 
 Group::~Group()
@@ -61,33 +64,61 @@ Group::~Group()
 void Group::add_person(Person * person)
 {
 #ifdef DEBUG_BITOPS
-    cout << "Pre: " << std::bitset<32>(m_group_yeses) << "  ";
+    cout << "Pre: " << std::bitset<32>(m_group_any_yeses) << "  ";
+    cout << "Adding person with " << std::bitset<32>(person->get_yeses()) << "  ";
+    cout << "Pre: " << std::bitset<32>(m_group_all_yeses) << "  ";
     cout << "Adding person with " << std::bitset<32>(person->get_yeses()) << "  ";
 #endif
+
     m_persons.push_back(person);
-    m_group_yeses = m_group_yeses | person->get_yeses();
+    m_group_any_yeses = m_group_any_yeses | person->get_yeses();
+    m_group_all_yeses = m_group_all_yeses & person->get_yeses();
+
+
 #ifdef DEBUG_BITOPS
-    cout << "Post: " << std::bitset<32>(m_group_yeses) << endl;
+    cout << "Post: " << std::bitset<32>(m_group_any_yeses) << endl;
+    cout << "Post: " << std::bitset<32>(m_group_all_yeses) << endl;
 #endif
 }
 
-uint32_t Group::get_group_yeses()
+uint32_t Group::get_group_any_yeses()
 {
-    return m_group_yeses;
+    return m_group_any_yeses;
 }
 
-int Group::get_yes_count()
+uint32_t Group::get_group_all_yeses()
+{
+    return m_group_all_yeses;
+}
+
+int Group::get_any_yes_count()
 {
    int count = 0;
    for (int i=0; i<26; i++)
    {
-       if (m_group_yeses & (YES << i))
+       if (m_group_any_yeses & (YES << i))
        {
            count++;
        }
    }
 #ifdef DEBUG_BITOPS
-   cout << "Group with: " << std::bitset<32>(m_group_yeses) << " has count " << count << endl;
+   cout << "Group with: " << std::bitset<32>(m_group_any_yeses) << " has count " << count << endl;
+#endif
+return count;
+}
+
+int Group::get_all_yes_count()
+{
+   int count = 0;
+   for (int i=0; i<26; i++)
+   {
+       if (m_group_all_yeses & (YES << i))
+       {
+           count++;
+       }
+   }
+#ifdef DEBUG_BITOPS
+   cout << "Group with: " << std::bitset<32>(m_group_all_yeses) << " has count " << count << endl;
 #endif
 return count;
 }
@@ -152,7 +183,24 @@ string AocDay6::part1(string filename, vector<string> extra_args)
     for (vector<Group *>::iterator group_iter = groups.begin(); group_iter != groups.end(); ++group_iter)
     {
         Group * group = *group_iter;
-        total_yeses += group->get_yes_count();
+        total_yeses += group->get_any_yes_count();
+        // Done with the group. Delete it here so I don't write another clean-up loop
+        delete group;
+    }
+    ostringstream out;
+    out << total_yeses;
+    return out.str();
+}
+
+string AocDay6::part2(string filename, vector<string> extra_args)
+{
+    vector<Group * > groups = parse_input(filename);
+    int total_yeses = 0;
+    
+    for (vector<Group *>::iterator group_iter = groups.begin(); group_iter != groups.end(); ++group_iter)
+    {
+        Group * group = *group_iter;
+        total_yeses += group->get_all_yes_count();
         // Done with the group. Delete it here so I don't write another clean-up loop
         delete group;
     }

@@ -28,3 +28,6 @@
 6,1,test_cases/day6_test1.txt,11
 6,1,test_cases/day6_test2.txt,6
 6,1,day6_input.txt,6930
+6,2,test_cases/day6_test1.txt,6
+6,2,test_cases/day6_test2.txt,3
+6,2,day6_input.txt,3585
