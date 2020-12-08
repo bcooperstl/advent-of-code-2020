@@ -39,8 +39,11 @@ class Instruction
     public:
         Instruction(string operation, long argument);
         ~Instruction();
+        string get_operation();
+        long get_argument();
         bool is_run();
         void set_run(bool run);
+        
 };
 
 class Program
@@ -66,17 +69,26 @@ class Operation
 
 class AccOperation : public Operation
 {
-    void run_operation(Instruction * instruction, Computer * computer);
+    public:
+        AccOperation();
+        ~AccOperation();
+        void run_operation(Instruction * instruction, Computer * computer);
 };
 
 class JmpOperation : public Operation
 {
-    void run_operation(Instruction * instruction, Computer * computer);
+    public:
+        JmpOperation();
+        ~JmpOperation();
+        void run_operation(Instruction * instruction, Computer * computer);
 };
 
 class NopOperation : public Operation
 {
-    void run_operation(Instruction * instruction, Computer * computer);
+    public:
+        NopOperation();
+        ~NopOperation();
+        void run_operation(Instruction * instruction, Computer * computer);
 };
 
 class Operations
