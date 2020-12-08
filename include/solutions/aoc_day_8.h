@@ -7,6 +7,10 @@
 
 #include "aoc_day.h"
 
+#define ACC "acc"
+#define JMP "jmp"
+#define NOP "nop"
+
 using namespace std;
 
 class Operations;
@@ -106,6 +110,7 @@ class Operations
 class AocDay8 : public AocDay
 {
     private:
+        void load_input_to_program(string filename, Program * program);
     public:
         AocDay8();
         ~AocDay8();
