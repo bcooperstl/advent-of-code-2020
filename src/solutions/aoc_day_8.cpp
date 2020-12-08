@@ -230,11 +230,35 @@ void AocDay8::load_input_to_program(string filename, Program * program)
     return;
 };
 
+/* Planned approach
+* Create a Computer, which will in turn grab the Operations singleton, which will result in the 3 derived Operations being created
+* Create a Program from the input file
+* Loop through the Program
+    * Get the next instruction to Execute from the Computer's instruction pointer.
+    * If that insturction has its run flag as true, we are done
+        * Store the accumulator value from the Computer to be returned and discontinue the loop.
+    * Call the Computer's run_instruction method, passing the Instruction. The Computer will fetch the Operation and call its run_operation method to do the processing.
+    * Mark the instruction as ran
+* Return the stored accumulator value.
+*/
 string AocDay8::part1(string filename, vector<string> extra_args)
 {
     Program program;
     Computer computer;
     load_input_to_program(filename, &program);
+    
+    while (1)
+    {
+        cout << "Next instruction to run is " << computer.get_instruction_pointer() << endl;
+        Instruction * next = program.get_instruction(computer.get_instruction_pointer());
+        if (next->is_run())
+        {
+            cout << " Insturction has already been run. Stopping" << endl;
+            break;
+        }
+        computer.run_instruction(next);
+        next->set_run(true);
+    }
     
     ostringstream out;
     out << computer.get_accumulator();
