@@ -44,6 +44,7 @@ class Instruction
         Instruction(string operation, long argument);
         ~Instruction();
         string get_operation();
+        void set_operation(string operation);
         long get_argument();
         bool is_run();
         void set_run(bool run);
@@ -59,6 +60,8 @@ class Program
         ~Program();
         void add_instruction(Instruction * instruction);
         Instruction * get_instruction(long line);
+        void set_all_not_run();
+        long get_instruction_count();
 };
 
 class Operation        
@@ -115,7 +118,7 @@ class AocDay8 : public AocDay
         AocDay8();
         ~AocDay8();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 

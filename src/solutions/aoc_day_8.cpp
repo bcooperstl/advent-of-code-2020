@@ -76,6 +76,11 @@ string Instruction::get_operation()
     return m_operation;
 }
 
+void Instruction::set_operation(string operation)
+{
+    m_operation = operation;
+}
+
 long Instruction::get_argument()
 {
     return m_argument;
@@ -118,6 +123,19 @@ Instruction * Program::get_instruction(long line)
         return NULL;
     }
     return m_instructions[line];
+}
+
+void Program::set_all_not_run()
+{
+    for (int i=0; i<m_instructions.size(); i++)
+    {
+        m_instructions[i]->set_run(false);
+    }
+}
+
+long Program::get_instruction_count()
+{
+    return m_instructions.size();
 }
 
 Operation::Operation(string operation)
@@ -258,6 +276,111 @@ string AocDay8::part1(string filename, vector<string> extra_args)
         }
         computer.run_instruction(next);
         next->set_run(true);
+    }
+    
+    ostringstream out;
+    out << computer.get_accumulator();
+    return out.str();
+}
+
+
+/* Planned approach
+* Create a Computer, which will in turn grab the Operations singleton, which will result in the 3 derived Operations being created
+* Create a Program from the input file
+* Loop through each line of the program, while success is false
+    * If the line is acc, skip this iteration of the loop
+    * Initialize the computer by setting the instruction pointer and accumulator to 0.
+    * Initialize the program by setting the set_all_not_run method.
+    * Initialize a success indicator to false.
+    * Perform the nop/jmp flip for this line.
+    * Loop through the Program
+        * Get the next instruction number to Execute from the Computer's instruction pointer.
+        * If this instruction number equals the program's line count (i.e. it would be the line following the last one)
+            * We have a successful run. Set success to true, and break out of the loop.
+        * If the next instruction number is less than 0 or more than the line count + 1, break; we are way out of range.
+        * Get the instruction that corresponds to the instrution number.
+        * If that insturction has its run flag as true, break; we have an infite loop with a repeated instruction.
+        * Call the Computer's run_instruction method, passing the Instruction. The Computer will fetch the Operation and call its run_operation method to do the processing.
+        * Mark the instruction as ran
+    * Perform the nop/jmp flip back for this line so it is like it originally was for the next iteration.
+    * If success indicator is true, break out of the parent loop. We're done.
+* Return the computer's accumulator value.
+*/
+
+string AocDay8::part2(string filename, vector<string> extra_args)
+{
+    Program program;
+    Computer computer;
+    load_input_to_program(filename, &program);
+    
+    long num_lines = program.get_instruction_count();
+    
+    for (int i=0; i<num_lines; i++)
+    {
+        Instruction * change_instruction = program.get_instruction(i);
+        // skip if acc
+        if (change_instruction->get_operation() == ACC)
+        {
+            continue;
+        }
+        
+        computer.set_instruction_pointer(0);
+        computer.set_accumulator(0);
+        program.set_all_not_run();
+        bool success = false;
+        
+        cout << "Checking by swapping instruction " << i << endl;
+        // swap the operation
+        if (change_instruction->get_operation() == JMP)
+        {
+            cout << " Swapping from JMP to NOP" << endl;
+            change_instruction->set_operation(NOP);
+        }
+        else
+        {
+            cout << " Swapping from NOP to JMP" << endl;
+            change_instruction->set_operation(JMP);
+        }
+        
+        while (1)
+        {
+            long instruction_number = computer.get_instruction_pointer();
+            if (instruction_number == num_lines)
+            {
+                cout << " Next instruction to run is " << instruction_number << " which is one past the end. SUCCESS!!" << endl;
+                success = true;
+                break;
+            }
+            if (instruction_number < 0 || instruction_number > num_lines)
+            {
+                cout << " Next instruction to run is out of range. Got " << instruction_number << " for range 0 - " << num_lines - 1 << endl;
+                break;
+            }
+            Instruction * next = program.get_instruction(computer.get_instruction_pointer());
+            if (next->is_run())
+            {
+                cout << " Insturction " << instruction_number << " has already been run. Infinte loop with this modification" << endl;
+                break;
+            }
+            computer.run_instruction(next);
+            next->set_run(true);
+        }
+        // swap back
+        if (change_instruction->get_operation() == NOP)
+        {
+            cout << " Swapping back to JMP" << endl;
+            change_instruction->set_operation(JMP);
+        }
+        else
+        {
+            cout << " Swapping back to NOP" << endl;
+            change_instruction->set_operation(NOP);
+        }
+        if (success)
+        {
+            cout << " BREAKING ON SUCCESS" << endl;
+            break;
+        }
     }
     
     ostringstream out;
