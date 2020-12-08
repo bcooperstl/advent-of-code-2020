@@ -61,3 +61,5 @@ The length of this list is the result.
 ## Things I learned ##
 
 More working with the c++ regex library. Getting multiple matches out of an input. Use of the regex_token_iterator to get portions of submatches
+
+I should have known this, but using iterators over a loop where you add elements voids the iterators. Ended up going with loop indices instead
