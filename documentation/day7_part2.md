@@ -73,4 +73,4 @@ There will also be a lookup map going from a string to a Bag, so that I can quic
 
 ## Things I learned ##
 
-Working with a c++ unordered_set to store the items that have been processed for easier lookup.
+I thought it was a neat way to build the list forward through the list with duplicates, then just not process them going backwards if they had already been processed. This assured that all children will be processed before the parents.
