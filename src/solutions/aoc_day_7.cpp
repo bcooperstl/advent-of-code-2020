@@ -163,6 +163,8 @@ void AocDay7::process_line(string line)
             Bag * contents_bag = find_add_bag_in_map(contents_color);
             cout << " Adding " << quantity << " " << contents_color << " bags to " << matches[1].str() << " bag." << endl;
             bag->add_contents(quantity, contents_bag);
+            cout << " Adding " << matches[1].str() << " bag to be contained by " << contents_color << " bag." << endl;
+            contents_bag->add_contained_by(bag);
         }
         return;
     }
@@ -188,15 +190,59 @@ void AocDay7::process_input(string filename)
     {
         process_line(*iter);
     }
+    return;
 }
 
+/*
+Use the lookup table find the shiny gold Bag. From this, go through each member of the contained_by list. Mark them processed and add them to a list of container bags.  
+Iterate through this container bags list, doing the same lookup and add to the end of list, but only if the looked up bag has not been processed.  
+Repeat until every element in the list has been done.  
+The length of this list is the result.
+*/
 string AocDay7::part1(string filename, vector<string> extra_args)
 {
     process_input(filename);
-    long counter = 0;
+    vector<Bag *> containing_bags;
+    
+    int counter = 0;
+    // get the gold bag
+    Bag * start = m_lookup_map["shiny gold"];
+    
+    // mark all of the gold back's contained_by bags as processed and add them to the containing_bags list
+    vector<Bag *> contained_by = start->get_contained_by();
+    cout << endl << endl << "Processing " << contained_by.size() << " bags from " << start->get_color() << " to get its containing bags" << endl;
+    for (vector<Bag *>::iterator bag_iter = contained_by.begin(); bag_iter != contained_by.end(); ++bag_iter)
+    {
+        Bag * bag = *bag_iter;
+        cout << " Marking " << bag->get_color() << " as processed; it is contained by " << start->get_color() << endl;
+        bag->set_processed();
+        containing_bags.push_back(bag);
+    }
+    
+    // repeat the above process with every bag in the containing_bags list
+    for (int cb_index=0; cb_index < containing_bags.size(); cb_index++)
+    {
+        Bag * cb = containing_bags[cb_index];
+        cout << "Processing " << cb->get_color() << " to get its containing bags" << endl;
+        contained_by = cb->get_contained_by();
+        for (vector<Bag *>::iterator bag_iter = contained_by.begin(); bag_iter != contained_by.end(); ++bag_iter)
+        {
+            Bag * bag = *bag_iter;
+            if (!bag->get_processed())
+            {
+                cout << " Marking " << bag->get_color() << " as processed; it is contained by " << cb->get_color() << endl;
+                bag->set_processed();
+                containing_bags.push_back(bag);
+            }
+            else
+            {
+                cout << " Skipping " << bag->get_color() << ". It is already processed" << endl;
+            }
+        }
+    }
     
     ostringstream out;
-    out << counter;
+    out << containing_bags.size();
     return out.str();
 }
 
