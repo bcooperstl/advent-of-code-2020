@@ -33,6 +33,7 @@ Bag * BagContents::get_bag()
 Bag::Bag(string color)
 {
     m_color = color;
+    m_number_of_contained_bags = 0;
     m_processed = false;
 }
 
@@ -48,6 +49,16 @@ string Bag::get_color()
 bool Bag::get_processed()
 {
     return m_processed;
+}
+
+int Bag::get_number_of_contained_bags()
+{
+    return m_number_of_contained_bags;
+}
+
+void Bag::set_number_of_contained_bags(int number)
+{
+    m_number_of_contained_bags = number;
 }
 
 vector<Bag *> Bag::get_contained_by()
@@ -254,3 +265,74 @@ string AocDay7::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+/*
+* Use the lookup table to find the shiny gold bag, and store this at the beginning of the to_process list.
+* Loop over the to_process list, adding all of the Bags from that Bag's contents list to the to_process list. There will be duplicates, and that is ok. Eventually, the bags will have empty contents lists, so this will terminate.
+
+* Loop over the to_process list in reverse. 
+* If the Bag has already been processed, do nothing
+* If not, calculate the number of contained bags by multiplying each quantity by the corresponding Bag's (number of contained bags + 1), and summing those results. The +1 is for the bag itself
+
+* The shiny gold Bag's number of contained bags is the final result.
+*/
+string AocDay7::part2(string filename, vector<string> extra_args)
+{
+    process_input(filename);
+    vector<Bag *> to_process;
+    
+    int counter = 0;
+    // get the gold bag
+    Bag * start = m_lookup_map["shiny gold"];
+    
+    cout << endl << endl << "Adding " << start->get_color() << " to be processed as the starting bag" << endl;
+    to_process.push_back(start);
+    for (int i=0; i<to_process.size(); i++)
+    {
+        Bag * bag = to_process[i];
+        vector<BagContents> contained_bags = bag->get_contents();
+        //cout << "The " << bag->get_color() << " bag has " << contained_bags.size() << " contents" << endl;
+        for (int j=0; j<contained_bags.size(); j++)
+        {
+            cout << "Adding " << contained_bags[j].get_bag()->get_color() << " to be processed from " << bag->get_color() << endl;
+            to_process.push_back(contained_bags[j].get_bag());
+        }
+    }
+    
+    cout << "Processing in reverse" << endl;
+    for (int i=to_process.size() - 1; i >= 0; i--)
+    {
+        Bag * bag = to_process[i];
+        // skip if already processed
+        if (bag->get_processed())
+        {
+            cout << "Bag " << bag->get_color() << " is already processed" << endl;
+            continue;
+        }
+        vector<BagContents> contents = bag->get_contents();
+        int sum = 0;
+        for (int j=0; j<contents.size(); j++)
+        {
+            Bag * contained_bag = contents[j].get_bag();
+            if (!contained_bag->get_processed())
+            {
+                cout << "****** BAG " << contained_bag->get_color() << " HAS NOT BEEN PROCESSED. CHECK YOUR LOGIC ******" << endl;
+            }
+            sum += (contents[j].get_quantity() * (contained_bag->get_number_of_contained_bags() + 1));
+        }
+        cout << "Setting bag " << bag->get_color() << " to have " << sum << " contained bags" << endl;
+        bag->set_number_of_contained_bags(sum);
+        bag->set_processed();
+    }
+        
+    ostringstream out;
+    out << start->get_number_of_contained_bags();
+
+    // Need to clean up my internal data before a next run
+    for (map<string, Bag *>::iterator bag_iter = m_lookup_map.begin(); bag_iter != m_lookup_map.end(); ++bag_iter)
+    {
+        delete bag_iter->second;
+    }
+    m_lookup_map.clear();
+
+    return out.str();
+}
