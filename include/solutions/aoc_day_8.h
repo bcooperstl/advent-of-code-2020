@@ -84,10 +84,11 @@ class Operations
     private:
         static Operations * m_instance;
         Operations();
+        map<string, Operation *> m_operations;
     public:
         static Operations * get_instance();
         ~Operations();
-        Operation * lookup_operations(string name);
+        Operation * get_operation(string name);
 };
 
 class AocDay8 : public AocDay
