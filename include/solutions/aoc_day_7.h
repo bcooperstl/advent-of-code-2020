@@ -31,11 +31,14 @@ private:
     vector<Bag *> m_contained_by;
     vector<BagContents> m_contents;
     bool m_processed;
+    int m_number_of_contained_bags;
 public:
     Bag(string color);
     ~Bag();
     string get_color();
     bool get_processed();
+    void set_number_of_contained_bags(int number);
+    int get_number_of_contained_bags();
     vector<Bag *> get_contained_by();
     vector<BagContents> get_contents();
     void add_contained_by(Bag * bag);
@@ -58,7 +61,7 @@ class AocDay7 : public AocDay
         AocDay7();
         ~AocDay7();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
