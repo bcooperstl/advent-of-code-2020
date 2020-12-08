@@ -114,8 +114,10 @@ Bag * AocDay7::find_add_bag_in_map(string color)
     }
     // no color found - create a new bag, add it to the map, and return the new bag.
     Bag * bag = new Bag(color);
+#ifdef DEBUG_DAY7_BAGS
     cout << "Lookup Map: Bag " << bag->get_color() << " added without contents" << endl;
-    m_lookup_map[color]=bag;
+#endif
+m_lookup_map[color]=bag;
     return bag;
 }
 
@@ -134,8 +136,10 @@ void AocDay7::process_line(string line)
         cout << "  No Other Bags regex matches. Color is " << matches[1] << endl;
 #endif
         Bag * bag = find_add_bag_in_map(matches[1].str());
+#ifdef DEBUG_DAY7_BAGS
         cout << "No contents to add to " << matches[1].str() << " bag " << endl;
-        // Nothing else to do here - no contents to add
+#endif
+// Nothing else to do here - no contents to add
         return;
     }
     else
@@ -153,8 +157,9 @@ void AocDay7::process_line(string line)
         cout << "  Remainder is [" << matches[2] << "]" << endl;
 #endif
         Bag * bag = find_add_bag_in_map(matches[1].str());
+#ifdef DEBUG_DAY7_BAGS
         cout << "Adding contents to add to " << matches[1].str() << " bag " << endl;
-        
+#endif        
         string contents = matches[2].str();
         int submatches[] = { 1, 2 };
         std::regex_token_iterator<std::string::iterator> end_iter;
@@ -172,9 +177,13 @@ void AocDay7::process_line(string line)
             string contents_color = (*contents_iter).str();
             ++contents_iter;
             Bag * contents_bag = find_add_bag_in_map(contents_color);
+#ifdef DEBUG_DAY7_BAGS
             cout << " Adding " << quantity << " " << contents_color << " bags to " << matches[1].str() << " bag." << endl;
+#endif
             bag->add_contents(quantity, contents_bag);
+#ifdef DEBUG_DAY7_BAGS
             cout << " Adding " << matches[1].str() << " bag to be contained by " << contents_color << " bag." << endl;
+#endif
             contents_bag->add_contained_by(bag);
         }
         return;
@@ -221,11 +230,15 @@ string AocDay7::part1(string filename, vector<string> extra_args)
     
     // mark all of the gold back's contained_by bags as processed and add them to the containing_bags list
     vector<Bag *> contained_by = start->get_contained_by();
+#ifdef DEBUG_DAY7_BAGS
     cout << endl << endl << "Processing " << contained_by.size() << " bags from " << start->get_color() << " to get its containing bags" << endl;
+#endif
     for (vector<Bag *>::iterator bag_iter = contained_by.begin(); bag_iter != contained_by.end(); ++bag_iter)
     {
         Bag * bag = *bag_iter;
+#ifdef DEBUG_DAY7_BAGS
         cout << " Marking " << bag->get_color() << " as processed; it is contained by " << start->get_color() << endl;
+#endif
         bag->set_processed();
         containing_bags.push_back(bag);
     }
@@ -234,20 +247,26 @@ string AocDay7::part1(string filename, vector<string> extra_args)
     for (int cb_index=0; cb_index < containing_bags.size(); cb_index++)
     {
         Bag * cb = containing_bags[cb_index];
+#ifdef DEBUG_DAY7_BAGS
         cout << "Processing " << cb->get_color() << " to get its containing bags" << endl;
+#endif
         contained_by = cb->get_contained_by();
         for (vector<Bag *>::iterator bag_iter = contained_by.begin(); bag_iter != contained_by.end(); ++bag_iter)
         {
             Bag * bag = *bag_iter;
             if (!bag->get_processed())
             {
+#ifdef DEBUG_DAY7_BAGS
                 cout << " Marking " << bag->get_color() << " as processed; it is contained by " << cb->get_color() << endl;
+#endif
                 bag->set_processed();
                 containing_bags.push_back(bag);
             }
             else
             {
+#ifdef DEBUG_DAY7_BAGS
                 cout << " Skipping " << bag->get_color() << ". It is already processed" << endl;
+#endif
             }
         }
     }
@@ -284,7 +303,9 @@ string AocDay7::part2(string filename, vector<string> extra_args)
     // get the gold bag
     Bag * start = m_lookup_map["shiny gold"];
     
+#ifdef DEBUG_DAY7_BAGS
     cout << endl << endl << "Adding " << start->get_color() << " to be processed as the starting bag" << endl;
+#endif
     to_process.push_back(start);
     for (int i=0; i<to_process.size(); i++)
     {
@@ -293,19 +314,25 @@ string AocDay7::part2(string filename, vector<string> extra_args)
         //cout << "The " << bag->get_color() << " bag has " << contained_bags.size() << " contents" << endl;
         for (int j=0; j<contained_bags.size(); j++)
         {
+#ifdef DEBUG_DAY7_BAGS
             cout << "Adding " << contained_bags[j].get_bag()->get_color() << " to be processed from " << bag->get_color() << endl;
+#endif
             to_process.push_back(contained_bags[j].get_bag());
         }
     }
     
+#ifdef DEBUG_DAY7_BAGS
     cout << "Processing in reverse" << endl;
+#endif
     for (int i=to_process.size() - 1; i >= 0; i--)
     {
         Bag * bag = to_process[i];
         // skip if already processed
         if (bag->get_processed())
         {
+#ifdef DEBUG_DAY7_BAGS
             cout << "Bag " << bag->get_color() << " is already processed" << endl;
+#endif
             continue;
         }
         vector<BagContents> contents = bag->get_contents();
@@ -319,7 +346,9 @@ string AocDay7::part2(string filename, vector<string> extra_args)
             }
             sum += (contents[j].get_quantity() * (contained_bag->get_number_of_contained_bags() + 1));
         }
+#ifdef DEBUG_DAY7_BAGS
         cout << "Setting bag " << bag->get_color() << " to have " << sum << " contained bags" << endl;
+#endif
         bag->set_number_of_contained_bags(sum);
         bag->set_processed();
     }
