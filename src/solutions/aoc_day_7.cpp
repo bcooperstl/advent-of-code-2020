@@ -243,6 +243,14 @@ string AocDay7::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << containing_bags.size();
+
+    // Need to clean up my internal data before a next run
+    for (map<string, Bag *>::iterator bag_iter = m_lookup_map.begin(); bag_iter != m_lookup_map.end(); ++bag_iter)
+    {
+        delete bag_iter->second;
+    }
+    m_lookup_map.clear();
+
     return out.str();
 }
 
