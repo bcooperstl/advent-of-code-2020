@@ -43,3 +43,5 @@
 #Extra parm for day 9 is for the preamble length
 9,1,test_cases/day9_test1.txt,127,5
 9,1,day9_input.txt,393911906,25
+9,2,test_cases/day9_test1.txt,62,5
+9,2,day9_input.txt,59341885,25
