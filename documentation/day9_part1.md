@@ -40,12 +40,12 @@ None anticipated.
 
 * Allocate an array of `entry` structs with the length of the input
 
-* Loop over the first *preamble_length* entries with `n`:
-    * Convert the input entry to a long and store it in the corresponding entry's `value` element
-    * Loop backwards from `n-1` to `0`, storing the sum in the `prior_sums` position (i.e. `n`+`n-1` is stored in `prior_sums[0]`; `n`+`n-2` is stored in `prior_sums[1]` etc)
+* Compute all of the prior_sums for all elements.
+    * Loop over each element from 1 to the end of the list with `i`
+        * Loop backwards over the prior `preamble_length - 1` elements of the list with `j`
+            * Store the sum of entries[i].value and entries[j].value in entries[i].prior_sums[i-j-1] (i.e. `n`+`n-1` is stored in `prior_sums[0]`; `n`+`n-2` is stored in `prior_sums[1]` etc)
 
-* Continue looping over the non-preamble entries of input with `n`:
-    * Convert the input entry to a long and store it in the corresponding entry's `value` element
+* Start looping over `entries` at `preamble_length` with `n`
     * Set found = false
     * Loop from n-24 to n-1 with i
         * Loop from 0 to (i-(n-24)) with j
@@ -56,8 +56,6 @@ None anticipated.
             * Break from this loop
     * If not found
         * Return the not found value
-    * Else (it is found)
-        * Loop backwards from `n-1` to `n-24`, storing the sum in the `prior_sums` position (i.e. `n`+`n-1` is stored in `prior_sums[0]`; `n`+`n-2` is stored in `prior_sums[1]` etc)
 
 ## Things I learned ##
 
