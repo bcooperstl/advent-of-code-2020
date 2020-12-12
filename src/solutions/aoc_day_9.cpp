@@ -137,3 +137,104 @@ string AocDay9::part1(string filename, vector<string> extra_args)
     out << result;
     return out.str();
 }
+
+string AocDay9::part2(string filename, vector<string> extra_args)
+{
+    if (extra_args.size() != 1)
+    {
+        cerr << "Day 9 Part 2 required 1 extra argument for the preamble length)" << endl;
+        return "";
+    }
+    
+    int preamble_length = strtol(extra_args[0].c_str(), NULL, 10);
+    cout << "preamble length is " << preamble_length << endl;
+    vector<string> lines = read_input(filename);
+    vector<struct Entry> entries;
+    for (int i=0; i<lines.size(); i++)
+    {
+        Entry e;
+        e.value=strtol(lines[i].c_str(), NULL, 10);
+        entries.push_back(e);
+    }
+    
+    compute_prior_sums(entries, preamble_length);
+    
+    long not_found = 0;
+    
+    for (int n=preamble_length; n < entries.size(); n++)
+    {
+        bool found = false;
+        for (int i=n-(preamble_length-1); i <= n-1; i++)
+        {
+            for (int j=0; j< (i-(n-preamble_length)); j++)
+            {
+                if (entries[n].value == entries[i].prior_sums[j])
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+            {
+                break;
+            }
+        }
+        if (!found)
+        {
+            not_found = entries[n].value;
+            break;
+        }
+    }
+    
+    cout << "Searching for not found value " << not_found << endl;
+    
+    long running_sum = entries[0].value;
+    int start_position = 0;
+    int end_position = 0;
+    
+/*
+Loop to increase the range and adjust accordingly
+* While running_sum does not equal the not_found value
+    * While running_sum < not_found value
+        * Increment end_position and add entries[end_position].value to running_sum
+    * While running_sum > not_found value
+        * Decrease running_sum by entries[start_position].value
+        * Increment start_position
+*/
+    while (running_sum != not_found)
+    {
+        while (running_sum < not_found)
+        {
+            end_position++;
+            running_sum+=entries[end_position].value;
+        }
+        while (running_sum > not_found)
+        {
+            running_sum-=entries[start_position].value;
+            start_position++;
+        }
+    }
+    
+    cout << "Range from " << start_position << " to " << end_position << " equals sum " << running_sum << endl;
+    
+    long min=entries[start_position].value;
+    long max=entries[start_position].value;
+    
+    for (int i=start_position+1; i<=end_position; i++)
+    {
+        if (entries[i].value < min)
+        {
+            min = entries[i].value;
+        }
+        if (entries[i].value > max)
+        {
+            max = entries[i].value;
+        }
+    }
+    
+    cout << "Max = " << max << " Min = " << min << " Sum = " << max+min << endl;
+    
+    ostringstream out;
+    out << max+min;
+    return out.str();
+}
