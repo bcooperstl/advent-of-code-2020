@@ -99,6 +99,12 @@ build/solutions/aoc_day_8.o: src/solutions/aoc_day_8.cpp  \
 	include/common/constants.h
 	g++ ${CPPFLAGS} -o build/solutions/aoc_day_8.o -c src/solutions/aoc_day_8.cpp
 
+build/solutions/aoc_day_9.o: src/solutions/aoc_day_9.cpp  \
+	include/solutions/aoc_day_9.h \
+	include/solutions/aoc_day.h \
+	include/common/constants.h
+	g++ ${CPPFLAGS} -o build/solutions/aoc_day_9.o -c src/solutions/aoc_day_9.cpp
+
 bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_day_0.o \
 	build/solutions/aoc_day_1.o \
@@ -109,8 +115,9 @@ bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_day_6.o \
 	build/solutions/aoc_day_7.o \
 	build/solutions/aoc_day_8.o \
+	build/solutions/aoc_day_9.o \
 	build/solutions/aoc_days.o
-	ar rcs bin/lib/libsolutions.a build/solutions/aoc_day.o build/solutions/aoc_days.o build/solutions/aoc_day_0.o build/solutions/aoc_day_1.o build/solutions/aoc_day_2.o build/solutions/aoc_day_3.o build/solutions/aoc_day_4.o build/solutions/aoc_day_5.o build/solutions/aoc_day_6.o build/solutions/aoc_day_7.o build/solutions/aoc_day_8.o
+	ar rcs bin/lib/libsolutions.a build/solutions/aoc_day.o build/solutions/aoc_days.o build/solutions/aoc_day_0.o build/solutions/aoc_day_1.o build/solutions/aoc_day_2.o build/solutions/aoc_day_3.o build/solutions/aoc_day_4.o build/solutions/aoc_day_5.o build/solutions/aoc_day_6.o build/solutions/aoc_day_7.o build/solutions/aoc_day_8.o build/solutions/aoc_day_9.o
 
 # The aoc executable
 build/aoc.o: src/aoc.cpp  \
@@ -141,6 +148,7 @@ clean:
 	build/solutions/aoc_day_6.o  \
 	build/solutions/aoc_day_7.o  \
 	build/solutions/aoc_day_8.o  \
+	build/solutions/aoc_day_9.o  \
 	build/aoc.o  \
 	bin/lib/librunner.a  \
 	bin/lib/libsolutions.a  \
@@ -160,6 +168,7 @@ all: build/runner/aoc_test.o  \
 	build/solutions/aoc_day_6.o  \
 	build/solutions/aoc_day_7.o  \
 	build/solutions/aoc_day_8.o  \
+	build/solutions/aoc_day_9.o  \
 	build/aoc.o  \
 	bin/lib/librunner.a  \
 	bin/lib/libsolutions.a  \

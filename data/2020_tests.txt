@@ -40,3 +40,6 @@
 8,1,day8_input.txt,1684
 8,2,test_cases/day8_test1.txt,8
 8,2,day8_input.txt,2188
+#Extra parm for day 9 is for the preamble length
+9,1,test_cases/day9_test1.txt,127,5
+9,1,day9_input.txt,393911906,25

@@ -27,7 +27,7 @@ An integer - the value of the accumulator before the repeated instruction is run
 
 ### Given Test Cases ###
 
-There is [one test case](../data/test_cases/day7_test1.txt) given. I don't anticipate needing other test cases.
+There is [one test case](../data/test_cases/day8_test1.txt) given. I don't anticipate needing other test cases.
 
 ### Custom Test Cases ###
 
