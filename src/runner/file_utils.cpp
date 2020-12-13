@@ -106,6 +106,28 @@ bool FileUtils::read_as_list_of_strings(string filename, vector<string> & lines)
     return true;
 }
 
+bool FileUtils::read_as_list_of_longs(string filename, vector<long> & values)
+{
+    ifstream infile(filename);
+    if (!infile)
+    {
+        cerr << "*****Error opening file " << filename << endl;
+        return false;
+    }
+    string line;
+    long value;
+    while (getline(infile, line))
+    {
+#ifdef DEBUG_RUNNER
+        cout << "Read line [" << line << "] from file" << endl;
+#endif
+        value = strtol(line.c_str(), NULL, 10);
+        values.push_back(value);
+    }
+    infile.close();
+    return true;
+}
+
 bool FileUtils::read_as_list_of_split_strings(string filename, vector<vector<string>> & split_strings, char delimiter, char quote_char, char comment_char)
 {
     vector<string> lines;
