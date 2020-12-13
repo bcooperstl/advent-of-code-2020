@@ -15,7 +15,7 @@ class AocDay10 : public AocDay
         AocDay10();
         ~AocDay10();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
