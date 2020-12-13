@@ -48,3 +48,6 @@
 10,1,test_cases/day10_test1.txt,35
 10,1,test_cases/day10_test2.txt,220
 10,1,day10_input.txt,2400
+10,2,test_cases/day10_test1.txt,8
+10,2,test_cases/day10_test2.txt,19208
+10,2,day10_input.txt,338510590509056
