@@ -222,3 +222,111 @@ void Screen::set_multi(vector<pair<int, int>> points, char value)
         set(points[i].first, points[i].second, value);
     }
 }
+
+int Screen::num_matching(char target)
+{
+    int count=0;
+    for (int y=0; y<m_height; y++)
+    {
+        for (int x=0; x<m_width; x++)
+        {
+            if (m_textmap[y][x]==target)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int Screen::num_matching_neighbors(int x, int y, char target, bool include_diagonals)
+{
+    int count=0;
+    
+    if ((x < m_min_x) || (x > m_max_x))
+    {
+        cerr << "***X value " << x << " is out of range (" << m_min_x << "," << m_max_x << ")" << endl;
+        return 0;
+    }
+    if ((y < m_min_y) || (y > m_max_y))
+    {
+        cerr << "***Y value " << y << " is out of range (" << m_min_y << "," << m_max_y << ")" << endl;
+        return 0;
+    }
+    
+    // up
+    if (y > m_min_y)
+    {
+        if (m_textmap[y-m_min_y-1][x-m_min_x] == target)
+        {
+            count++;
+        }
+    }
+    
+    // down
+    if (y < m_max_y)
+    {
+        if (m_textmap[y-m_min_y+1][x-m_min_x] == target)
+        {
+            count++;
+        }
+    }
+    
+    // left
+    if (x > m_min_x)
+    {
+        if (m_textmap[y-m_min_y][x-m_min_x-1] == target)
+        {
+            count++;
+        }
+    }
+    
+    // right
+    if (x < m_max_x)
+    {
+        if (m_textmap[y-m_min_y][x-m_min_x+1] == target)
+        {
+            count++;
+        }
+    }
+    
+    if (include_diagonals)
+    {
+        // up-left
+        if ((y > m_min_y) && (x > m_min_x))
+        {
+            if (m_textmap[y-m_min_y-1][x-m_min_x-1] == target)
+            {
+                count++;
+            }
+        }
+        
+        // up-right
+        if ((y > m_min_y) && (x < m_max_x))
+        {
+            if (m_textmap[y-m_min_y-1][x-m_min_x+1] == target)
+            {
+                count++;
+            }
+        }
+        
+        // down-left
+        if ((y < m_max_y) && (x > m_min_x))
+        {
+            if (m_textmap[y-m_min_y+1][x-m_min_x-1] == target)
+            {
+                count++;
+            }
+        }
+        
+        // down-right
+        if ((y < m_max_y) && (x < m_max_x))
+        {
+            if (m_textmap[y-m_min_y+1][x-m_min_x+1] == target)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
