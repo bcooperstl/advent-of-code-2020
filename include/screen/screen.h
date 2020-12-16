@@ -38,6 +38,8 @@ class Screen
         char get(int x, int y);
         void set(int x, int y, char value);
         void set_multi(vector<pair<int, int>> points, char value);
+        int num_matching_neighbors(int x, int y, char target, bool include_diagonals = true);
+        int num_matching(char target);
 };
 
 #endif
