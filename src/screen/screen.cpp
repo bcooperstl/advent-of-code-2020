@@ -150,9 +150,9 @@ void Screen::load(vector<string> lines)
 void Screen::display()
 {
     ostringstream buffer;
-    for (int y=0; y<m_width; y++)
+    for (int y=0; y<m_height; y++)
     {
-        for (int x=0; x<m_height; x++)
+        for (int x=0; x<m_width; x++)
         {
             buffer << m_textmap[y][x];
         }
@@ -171,7 +171,7 @@ bool Screen::equals(const Screen & other)
         return false;
     }
     
-    for (int y=0; y<m_width; y++)
+    for (int y=0; y<m_height; y++)
     {
         for (int x=0; x<m_width; x++)
         {
