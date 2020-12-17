@@ -2,7 +2,7 @@
 
 ## Requirements ##
 
-Given a set of actions and values, move the shift around the plane as specified. For our sake, the ship starts at the origin, facing East.
+Given a set of actions and values, move the ship around the plane as specified. For our sake, the ship starts at the origin, facing East.
 
 There are three types of actions:
 1) Move a specified direction. These are `N` for North, `S` for South, `E` for East, and `W` for West. The value is the number of positions to move.

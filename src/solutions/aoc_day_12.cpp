@@ -115,3 +115,88 @@ string AocDay12::part1(string filename, vector<string> extra_args)
     out << (abs(current_x)+abs(current_y));
     return out.str();
 }
+
+/* Planned Apporach
+* Parse the Input as described above
+* Set the current_x and current_y to 0 for them to be at the origin
+* Set the waypoint_x to 10 and waypoint_y to be 1 to correspond for them being at 10,1
+* Loop over the Instructions
+    * If the Instruction's Action is `F` for forward:
+        * Move the ship to the waypoint *value* times. This is done by adding the `waypoint_x*value` to `current_x` and `waypoint_y*value` to `current_y`
+    * If the Instruction's Action is `N`, `S`, `E`, or `W`
+        * Move the waypoint by adding or subtracting the Value to waypoint_x or waypoint_y as appropriate
+    * If the Instruction's Actionis 'L' or 'R'
+        * Change the waypoint a described in the Waypoint Rotation section.
+* Return the Manhattan distance from the origin. Since I started at 0,0, it's just `(abs(current_x) + abs(current_y))`
+*/
+
+string AocDay12::part2(string filename, vector<string> extra_args)
+{
+    vector<Day12Instruction> instructions = parse_input(filename);
+    
+    long current_x = 0; // start at the origin
+    long current_y = 0;
+    long waypoint_x = 10;
+    long waypoint_y = 1;
+    
+    cout << "Starting at (" << current_x << "," << current_y << ") with waypoint at (" << waypoint_x << "," << waypoint_y << ")" << endl;
+    
+    for (vector<Day12Instruction>::iterator inst_iter = instructions.begin(); inst_iter != instructions.end(); ++inst_iter)
+    {
+        Day12Instruction inst = *inst_iter;
+        
+        if (inst.action == FORWARD)
+        {
+            current_x += (waypoint_x*inst.value);
+            current_y += (waypoint_y*inst.value);
+        }
+        else if (inst.action == NORTH)
+        {
+            waypoint_y += inst.value;
+        }
+        else if (inst.action == SOUTH)
+        {
+            waypoint_y -= inst.value;
+        }
+        else if (inst.action == EAST)
+        {
+            waypoint_x += inst.value;
+        }
+        else if (inst.action == WEST)
+        {
+            waypoint_x -= inst.value;
+        }
+        else if ((inst.action == RIGHT && inst.value == 180) || (inst.action == LEFT && inst.value == 180))
+        {
+            long prev_x = waypoint_x;
+            long prev_y = waypoint_y;
+            waypoint_x = -1 * prev_x;
+            waypoint_y = -1 * prev_y;
+        }
+        else if ((inst.action == RIGHT && inst.value == 90) || (inst.action == LEFT && inst.value == 270))
+        {
+            long prev_x = waypoint_x;
+            long prev_y = waypoint_y;
+            waypoint_x = prev_y;
+            waypoint_y = -1 * prev_x;
+        }
+        else if ((inst.action == RIGHT && inst.value == 270) || (inst.action == LEFT && inst.value == 90))
+        {
+            long prev_x = waypoint_x;
+            long prev_y = waypoint_y;
+            waypoint_x = -1 * prev_y;
+            waypoint_y = prev_x;
+        }
+        else
+        {
+            cout << "*****SCREWED UP SOMETHING *** " << inst.action << " " << inst.value << endl;
+        }
+        cout << "Instruction " << inst.action << " " << inst.value << " results in position (" << current_x << "," << current_y << ") with waypoint at (" << waypoint_x << "," << waypoint_y << ")" << endl;
+    }
+    
+    cout << endl;
+    
+    ostringstream out;
+    out << (abs(current_x)+abs(current_y));
+    return out.str();
+}
