@@ -62,3 +62,4 @@
 12,2,test_cases/day12_test3.txt,286
 12,2,test_cases/day12_test4.txt,286
 12,2,test_cases/day12_test5.txt,286
+12,2,day12_input.txt,27016
