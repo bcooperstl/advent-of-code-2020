@@ -42,7 +42,7 @@ I will be doing this working through the Chinese Remainder Theorem. I found a go
 
 ### Main Loop ###
 * Parse the input as described above, returning the list of Bus_IDs
-*** CONTINUE HERE ***
+*** CONTINUE HERE WITH THE ALGORITH***
 
 
 ## Things I learned ##
