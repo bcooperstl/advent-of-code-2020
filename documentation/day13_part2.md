@@ -35,6 +35,9 @@ Hoping I don't need to make up a custom test case.
 
 I will be doing this working through the Chinese Remainder Theorem. I found a good [Youtube Video](https://www.youtube.com/watch?v=2-tdwLqyaKo) which explains it straightfoward, so I will be working on implementing that algorithm.
 
+There are also two Youtube Videos for the Extended Euclidean Algorithm for Module inverses that I used. [Video 1](https://www.youtube.com/watch?v=shaQZg8bqUM)  [Video 2](https://www.youtube.com/watch?v=fz1vxq5ts5I).
+
+
 ### Input Parsing ###
 * Parse the input using my function for lines based on commas
 * Skip the first line
