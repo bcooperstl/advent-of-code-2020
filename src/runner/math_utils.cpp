@@ -15,6 +15,9 @@ int64_t MathUtils::modulo_inverse(int64_t value, int64_t modulus)
     int64_t b[MAX_EUCLID_STEPS+1];
     int64_t c[MAX_EUCLID_STEPS+1];
     int64_t d[MAX_EUCLID_STEPS+1];
+    int64_t one_a_coef[MAX_EUCLID_STEPS+1];
+    int64_t one_b_coef[MAX_EUCLID_STEPS+1];
+    int64_t minus_1 = -1;
     
 #ifdef DEBUG_MATH
     cout << "Calculating modulo inverse for " << value << " * x = 1 modulo " << modulus << endl;
@@ -49,5 +52,29 @@ int64_t MathUtils::modulo_inverse(int64_t value, int64_t modulus)
         return 0;
     }
     
-    return 0;
+    one_a_coef[i]=1;
+    one_b_coef[i]=minus_1*c[i];
+    
+#ifdef DEBUG_MATH
+    cout << "Upward Equation " << i << ": 1 = (" << one_a_coef[i] << " * " << a[i] << ") + (" << one_b_coef[i] << " * " << b[i] << ")" << endl;
+#endif
+
+    for (int j=i-1; j>0; j--)
+    {
+        one_a_coef[j] = one_b_coef[j+1];
+        one_b_coef[j] = one_a_coef[j+1]-(one_b_coef[j+1]*c[j]);
+#ifdef DEBUG_MATH
+    cout << "Upward Equation " << j << ": 1 = (" << one_a_coef[j] << " * " << a[j] << ") + (" << one_b_coef[j] << " * " << b[j] << ")" << endl;
+#endif
+    }
+    
+    //one_b_coef[1] is our answer. need to mod is by the original modulus
+    
+    int64_t result = one_b_coef[1]%modulus;
+    if (result < 0)
+    {
+        result = result+modulus;
+    }
+    
+    return result;
 }
