@@ -64,18 +64,17 @@ Going to work down a series of equations of the form `a = b*c + d`
 * While `d[i]` is not 1:  
     *set `a[i+1]=b[i]` and `b[i+1]=d[i]` and repeat.
 
-Now we need to work backwards up the tree with j going from the final i to 0
 
-Another way to think of each line is that `d[j]=a[j]-b[j]*c[j]`
+Now we need to work backwards up the tree with *j* going from the final *i* to *1*
 
-Going to start with the last equation `1 = a[j]-b[j]*c[j]`.
-We know that `a[j]=b[j-1]` and `b[j]=d[j-1]=a[j-1]-b[j-1]*c[j-1]`.
-So first substituting in for `a[j]` means `1 = b[j-1] - b[j]*c[j]`.
-Then substituting in for `b[j]` means `1 = b[j-1] - (a[j-1]-b[j-1]*c[j-1])*c[j]` means `1 = b[j-1] - a[j-1]*c[j] + b[j-1]*c[j-1]*c[j]` means `1 = -1*c[j]*a[j-1] + (c[j]*c[j-1]-1)*b[j-1]`.
+I had to do a whole bunch of math on paper multiple times to figure this out, so it's not going to be retyped here.
 
-So, now we have 1 defined in terms of `a[j-1]` and `b[j-1]`. Repeat these substituions until you have 1 defined in terms of `a[0]` and `b[0]`.
+Working back up, we need to find the coefficients before the `a[j]` and `b[j]` terms so that `1=coef_a*a[j] + coef_b*b[j]`  
+Solving the lowest equation, `coef_a=1` and `coef_b=-1*c[j]`.  
+For lines above that, `coef_a[j]=coef_b[j+1]` and `coef_b[j]=coef_a[j+1]-(coef_b[j+1]*c[j])`
 
-Since we have started `a[0]=n` and `b[0]=m`, we can drop that term before the a[0] and the resulting term which we multiply b[0] by is our answer, mod the original n.
+Doing this repeatedly, we end up with 1 defined in terms of `a[0]` and `b[0]`: `1 = coef_a[1]*a[0] + coef_b[1]*b[0]`.  
+Since we have started `a[0]=n` (our modulus), that term drops out for the modul addition. *coef_b[1]* is the inverse that we are looking for.
 
 ### Chinese Remainder Theorem Algorithm ###
 
