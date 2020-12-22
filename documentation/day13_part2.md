@@ -20,12 +20,13 @@ Number - the ID of the bus multiplied by the minutes we have to wait to board th
 
 ### Given Test Cases ###
 
-There are five test cases given:
+There are six test cases given:
 * [1](../data/test_cases/day13_test1.txt)
 * [2](../data/test_cases/day13_test2.txt)
 * [3](../data/test_cases/day13_test3.txt)
 * [4](../data/test_cases/day13_test4.txt)
 * [5](../data/test_cases/day13_test5.txt)
+* [6](../data/test_cases/day13_test6.txt)
 
 ### Custom Test Cases ###
 
