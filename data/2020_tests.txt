@@ -71,3 +71,4 @@
 13,2,test_cases/day13_test4.txt,779210
 13,2,test_cases/day13_test5.txt,1261476
 13,2,test_cases/day13_test6.txt,1202161486
+13,2,day13_input.txt,1106724616194525
