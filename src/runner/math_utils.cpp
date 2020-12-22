@@ -86,6 +86,11 @@ int64_t MathUtils::modulo_inverse(int64_t value, int64_t modulus)
         result = result+modulus;
     }
     
+    if ((result * value) % modulus != 1)
+    {
+        cerr << "******INVALID MODULO INVERSE FOR " << value << " mod " << modulus << ". " << result << " DOES NOT WORK CORRECTLY" << endl;
+    }        
+    
     return result;
 }
 
@@ -148,6 +153,14 @@ int64_t MathUtils::chinese_remainder_theorem(int num_equations, int64_t * values
 #ifdef DEBUG_CRT
     cout << "Final Chinese Remainder Theorem result is " << result << endl;
 #endif
+    
+    for (int i=0; i<num_equations; i++)
+    {
+        if ((result % moduluses[i]) != values[i])
+        {
+            cerr << "******INVALID CHINESE REMAINDER THEORM APPLICATION FOR " << values[i] << " mod " << moduluses[i] << ". " << result << " DOES NOT WORK CORRECTLY" << endl;
+        }        
+    }
     
     return result;
 }
