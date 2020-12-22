@@ -26,10 +26,16 @@ build/runner/file_utils.o: src/runner/file_utils.cpp  \
 	include/common/constants.h
 	g++ ${CPPFLAGS} -o build/runner/file_utils.o -c src/runner/file_utils.cpp
 
+build/runner/math_utils.o: src/runner/math_utils.cpp  \
+	include/runner/math_utils.h \
+	include/common/constants.h
+	g++ ${CPPFLAGS} -o build/runner/math_utils.o -c src/runner/math_utils.cpp
+
 bin/lib/librunner.a: build/runner/aoc_test.o  \
 	build/runner/aoc_tests.o  \
-	build/runner/file_utils.o
-	ar rcs bin/lib/librunner.a build/runner/aoc_test.o build/runner/aoc_tests.o build/runner/file_utils.o
+	build/runner/file_utils.o \
+	build/runner/math_utils.o
+	ar rcs bin/lib/librunner.a build/runner/aoc_test.o build/runner/aoc_tests.o build/runner/file_utils.o build/runner/math_utils.o
 
 # Screen libary - contains the screen and screen overlay functionality for game-of-life like problems
 build/screen/screen.o: src/screen/screen.cpp  \
@@ -161,6 +167,23 @@ bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_days.o
 	ar rcs bin/lib/libsolutions.a $^
 
+# Test Programs
+build/runner/test_modulo_inverse.o : src/runner/test_modulo_inverse.cpp \
+	include/runner/math_utils.h
+	g++ ${CPPFLAGS} -o build/runner/test_modulo_inverse.o -c src/runner/test_modulo_inverse.cpp
+
+bin/test_modulo_inverse : build/runner/test_modulo_inverse.o \
+	bin/lib/librunner.a 
+	g++ ${CPPFLAGS} -o bin/test_modulo_inverse build/runner/test_modulo_inverse.o -Lbin/lib -lrunner
+
+build/runner/test_chinese_remainder_theorem.o : src/runner/test_chinese_remainder_theorem.cpp \
+	include/runner/math_utils.h
+	g++ ${CPPFLAGS} -o build/runner/test_chinese_remainder_theorem.o -c src/runner/test_chinese_remainder_theorem.cpp
+
+bin/test_chinese_remainder_theorem : build/runner/test_chinese_remainder_theorem.o \
+	bin/lib/librunner.a 
+	g++ ${CPPFLAGS} -o bin/test_chinese_remainder_theorem build/runner/test_chinese_remainder_theorem.o -Lbin/lib -lrunner
+
 # The aoc executable
 build/aoc.o: src/aoc.cpp  \
 	include/solutions/aoc_days.h  \
@@ -180,6 +203,9 @@ clean:
 	rm -f build/runner/aoc_test.o  \
 	build/runner/aoc_tests.o  \
 	build/runner/file_utils.o  \
+	build/runner/math_utils.o  \
+	build/runner/test_modulo_inverse.o  \
+	build/runner/test_chinese_remainder_theorem.o  \
 	build/screen/screen.o  \
 	build/screen/overlay.o  \
 	build/solutions/aoc_day.o  \
@@ -202,11 +228,16 @@ clean:
 	bin/lib/librunner.a  \
 	bin/lib/libscreen.a  \
 	bin/lib/libsolutions.a  \
+	bin/test_modulo_inverse  \
+	bin/test_chinese_remainder_theorem  \
 	bin/aoc
 
 all: build/runner/aoc_test.o  \
 	build/runner/aoc_tests.o  \
 	build/runner/file_utils.o  \
+	build/runner/math_utils.o  \
+	build/runner/test_modulo_inverse.o  \
+	build/runner/test_chinese_remainder_theorem.o  \
 	build/screen/screen.o  \
 	build/screen/overlay.o  \
 	build/solutions/aoc_day.o  \
@@ -229,4 +260,6 @@ all: build/runner/aoc_test.o  \
 	bin/lib/librunner.a  \
 	bin/lib/libscreen.a  \
 	bin/lib/libsolutions.a  \
+	bin/test_modulo_inverse  \
+	bin/test_chinese_remainder_theorem  \
 	bin/aoc

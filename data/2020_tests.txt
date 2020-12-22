@@ -65,3 +65,10 @@
 12,2,day12_input.txt,27016
 13,1,test_cases/day13_test1.txt,295
 13,1,day13_input.txt,119
+13,2,test_cases/day13_test1.txt,1068781
+13,2,test_cases/day13_test2.txt,3417
+13,2,test_cases/day13_test3.txt,754018
+13,2,test_cases/day13_test4.txt,779210
+13,2,test_cases/day13_test5.txt,1261476
+13,2,test_cases/day13_test6.txt,1202161486
+13,2,day13_input.txt,1106724616194525
