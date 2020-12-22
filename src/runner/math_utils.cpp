@@ -4,7 +4,7 @@
 #include "math_utils.h"
 
 //#define DEBUG_MODULO_INVERSE
-#define DEBUG_CRT
+//#define DEBUG_CRT
 
 #define MAX_EUCLID_STEPS 64
 #define MAX_CRT_EQUATIONS 64
