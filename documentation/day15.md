@@ -73,3 +73,11 @@ Result of prev_number is *0*, which matches the end of the 10-round sample
 For part 1, I thought I could do this brute force with an array of 2020 longs, but I wanted to try something different. I'm glad I did that, since all I had to do was change a constant and I had the part 2 solution.
 
 If this isn't fast enough for part 2, I'll update my map to be a faster data structure.
+
+### First Attempt at optimizing part 2 ###
+
+Part 2 runs in about 55 seconds. I'd like to try to speed this up.
+Going to put the values `0-999` in an array, and only use the map for values `1000` or greater.
+
+By going up to 999, I cut the runtime down to around 30 seconds. Going up to 999999 cuts it down to 12 seconds.
+

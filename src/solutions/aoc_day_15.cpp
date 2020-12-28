@@ -65,7 +65,7 @@ string AocDay15::part1(string filename, vector<string> extra_args)
     for (int i=0; i<starting_numbers.size(); i++)
     {
         int value = starting_numbers[i];
-        if (i != last_turns.size() -1)
+        if (i != starting_numbers.size() -1)
         {
             last_turns[value]=turn_counter;
 #ifdef DEBUG_DAY15
@@ -106,6 +106,12 @@ string AocDay15::part1(string filename, vector<string> extra_args)
 string AocDay15::part2(string filename, vector<string> extra_args)
 {
     vector<long> starting_numbers = read_input(filename);
+    int last_turns_low[1000000];
+    for (int i=0; i<1000000; i++)
+    {
+        last_turns_low[i]=0;
+    }
+    
     map<int, int> last_turns;
     int turn_counter = 1;
     int prev_number;
@@ -113,12 +119,10 @@ string AocDay15::part2(string filename, vector<string> extra_args)
     for (int i=0; i<starting_numbers.size(); i++)
     {
         int value = starting_numbers[i];
-        if (i != last_turns.size() -1)
+        // From data inspection, these are always less than 1000. Can just set in last_turns_low
+        if (i != starting_numbers.size() -1)
         {
-            last_turns[value]=turn_counter;
-#ifdef DEBUG_DAY15
-            cout << "Setting last_turns[" << value << "] to " << turn_counter << " by processing starting numbers" << endl;
-#endif
+            last_turns_low[value]=turn_counter;
         }
         turn_counter++;
         prev_number=value;
@@ -130,22 +134,34 @@ string AocDay15::part2(string filename, vector<string> extra_args)
         {
             cout << turn_counter << endl;
         }
-        if (last_turns.find(prev_number) == last_turns.end())
+        
+        if (prev_number < 1000000)
         {
-#ifdef DEBUG_DAY15
-            cout << "Turn " << turn_counter << " has a new number. Setting last_turns[" << prev_number << "] to " << turn_counter-1 << " and prev_number to 0 " << endl;
-#endif
-            last_turns[prev_number] = turn_counter - 1;
-            prev_number = 0;
+            if (last_turns_low[prev_number] == 0)
+            {
+                last_turns_low[prev_number] = turn_counter - 1;
+                prev_number = 0;
+            }
+            else
+            {
+                int new_value = turn_counter - 1 - last_turns_low[prev_number];
+                last_turns_low[prev_number] = turn_counter - 1;
+                prev_number = new_value;
+            }
         }
         else
         {
-            int new_value = turn_counter - 1 - last_turns[prev_number];
-#ifdef DEBUG_DAY15
-            cout << "Turn " << turn_counter << " has a prior found number. Setting last_turns[" << prev_number << "] to " << turn_counter-1 << " and prev_number to " << new_value << endl;
-#endif
-            last_turns[prev_number] = turn_counter - 1;
-            prev_number = new_value;
+            if (last_turns.find(prev_number) == last_turns.end())
+            {
+                last_turns[prev_number] = turn_counter - 1;
+                prev_number = 0;
+            }
+            else
+            {
+                int new_value = turn_counter - 1 - last_turns[prev_number];
+                last_turns[prev_number] = turn_counter - 1;
+                prev_number = new_value;
+            }
         }
         turn_counter++;
     }
