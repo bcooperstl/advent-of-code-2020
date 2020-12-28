@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iterator>
 #include <map>
+#include <unordered_map>
 
 #include "aoc_day_15.h"
 #include "file_utils.h"
@@ -112,7 +113,7 @@ string AocDay15::part2(string filename, vector<string> extra_args)
         last_turns_low[i]=0;
     }
     
-    map<int, int> last_turns;
+    unordered_map<int, int> last_turns;
     int turn_counter = 1;
     int prev_number;
     
@@ -130,7 +131,7 @@ string AocDay15::part2(string filename, vector<string> extra_args)
     
     while (turn_counter <= 30000000)
     {
-        if (turn_counter%100000 == 0)
+        if (turn_counter%1000000 == 0)
         {
             cout << turn_counter << endl;
         }
