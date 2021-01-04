@@ -39,7 +39,6 @@ There will be a *field* class that will contain:
 * Name
 * List of Valid_Value_Ranges. This will be vector<pair<int,int>> to correspond to the valid ranges
 * isValid(int) method that will check if a value is valid or not
-* Add an error_rate method that takes a Ticket and returns the 
 
 There will be a *ticket* class that will contain:
 * List of Values present on the ticket.
