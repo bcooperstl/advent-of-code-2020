@@ -92,3 +92,5 @@
 15,2,test_cases/day15_test6.txt,18
 15,2,test_cases/day15_test7.txt,362
 15,2,day15_input.txt,129262
+16,1,test_cases/day16_test1.txt,71
+16,1,test_cases/day16_test2.txt,71
