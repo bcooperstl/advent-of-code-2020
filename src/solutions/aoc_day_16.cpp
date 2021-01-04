@@ -11,7 +11,7 @@
 #define YOUR_TICKET "your ticket:"
 #define NEARBY_TICKETS "nearby tickets:"
 
-//#define DEBUG_REGEX
+#define DEBUG_REGEX
 #define DEBUG_DAY16
 
 using namespace std;
@@ -222,7 +222,7 @@ string AocDay16::part1(string filename, vector<string> extra_args)
                 cout << "  Cache Miss" << endl;
 #endif
                 bool found = false;
-                for (int field_idx=0; field_idx <=input.fields.size(); field_idx++)
+                for (int field_idx=0; field_idx <input.fields.size(); field_idx++)
                 {
                     if (input.fields[field_idx].is_valid(value))
                     {
