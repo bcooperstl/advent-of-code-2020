@@ -11,8 +11,8 @@
 #define YOUR_TICKET "your ticket:"
 #define NEARBY_TICKETS "nearby tickets:"
 
-#define DEBUG_REGEX
-#define DEBUG_DAY16
+//#define DEBUG_REGEX
+//#define DEBUG_DAY16
 
 using namespace std;
 
