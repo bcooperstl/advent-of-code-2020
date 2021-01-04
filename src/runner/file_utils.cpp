@@ -165,3 +165,14 @@ bool FileUtils::read_as_list_of_split_longs(string filename, vector<vector<long>
     return true;
 }
 
+vector<int> FileUtils::split_line_to_ints(string input, char delimiter)
+{
+    vector<int> ints;
+    vector<string> strings = split_line_to_strings(input, delimiter, '\0', '\0');
+    for (int i=0; i<strings.size(); i++)
+    {
+        ints.push_back(strtol(strings[i].c_str(), NULL, 10));
+    }
+    return ints;
+}
+

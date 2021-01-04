@@ -84,11 +84,15 @@
 15,1,test_cases/day15_test6.txt,438
 15,1,test_cases/day15_test7.txt,1836
 15,1,day15_input.txt,1025
-15,2,test_cases/day15_test1.txt,175594
-15,2,test_cases/day15_test2.txt,2578
-15,2,test_cases/day15_test3.txt,3544142
-15,2,test_cases/day15_test4.txt,261214
-15,2,test_cases/day15_test5.txt,6895259
-15,2,test_cases/day15_test6.txt,18
-15,2,test_cases/day15_test7.txt,362
+#Commenting out most of the day 15 part 2 tests  since they take 12 seconds each to run.
+#15,2,test_cases/day15_test1.txt,175594
+#15,2,test_cases/day15_test2.txt,2578
+#15,2,test_cases/day15_test3.txt,3544142
+#15,2,test_cases/day15_test4.txt,261214
+#15,2,test_cases/day15_test5.txt,6895259
+#15,2,test_cases/day15_test6.txt,18
+#15,2,test_cases/day15_test7.txt,362
 15,2,day15_input.txt,129262
+16,1,test_cases/day16_test1.txt,71
+16,1,test_cases/day16_test2.txt,71
+16,1,day16_input.txt,28882
