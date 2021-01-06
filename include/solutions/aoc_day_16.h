@@ -49,6 +49,7 @@ class AocDay16 : public AocDay
         void parse_input(string filename, Day16Input & input);
         vector<Ticket> remove_invalid_tickets(Day16Input & input);
         void populate_field_position_possibilities(Possibilities & possibilities, vector<Ticket> &valid_tickets, vector<Field> &fields);
+        void reduce_field_position_possibilities(Possibilities & possibilities, map<int, int> & fields_to_position_map);
         void display_field_position_possibilities(Possibilities & possibilities, string heading);
         void display_field_position_possibilities(Possibilities & possibilities);
     public:
