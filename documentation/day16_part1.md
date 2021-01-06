@@ -25,11 +25,11 @@ Number - the ticket scanning error rate, as described in the requirements, for a
 
 ### Given Test Cases ###
 
-There is one provided test case (../data/test_cases/day16_test1.txt).
+There is [one provided test case ](../data/test_cases/day16_test1.txt).
 
 ### Custom Test Cases ###
 
-I will create a second test case (../data/test_cases/day16_test2.txt). This is similar to test 1, but has all of the invalid values on one nearby ticket.
+I will create a [second test case ](../data/test_cases/day16_test2.txt). This is similar to test 1, but has all of the invalid values on one nearby ticket.
 
 ## Approach ##
 
