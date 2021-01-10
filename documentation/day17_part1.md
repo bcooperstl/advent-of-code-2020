@@ -42,6 +42,8 @@ Instead I plan on making the space start with 1 unit of border in each direction
 
 I will create a simple cell struct. It will have 4 values - current_state, current_num_neighbors_active, prev_state, and prev_num_neighbors_active.
 
+*A next_state variable was added during development to hold the next state after the rules have been run but before applying it to the current state. This was needed to detect when to resize*
+
 There will be a space class that will contain a 3-D array of these cell structs. For ease in display, it will be cells[z][y][x].  
 With the given 2-D plane of size *m* x *n*, and the need to provide the 1 cell border, the initial size of this will be `x=m+2`, `y=n+2`, `z=3`.
 The class will contain the following methods:
@@ -58,14 +60,16 @@ Run Cycle will do the following operations:
 * Initialize all the cells:
     * copy every cell's current_state to its prev_state and its current_num_neighbors_active to its prev_num_neighbors_active. 
     * Set all current_num_neighbors_active to 0 and current_state to inactive.
-* loop over every non-border cell
-    * If the cell should be active based on the rules above and the prev_state and prev_num_neighbors_active
-        * Call the set_cell_active function on that cell. This will flip the current_state value and adjust the 26 neighbor's current_num_neighbors_active values
 * initialize grow_x, grow_y, and grow_z bools to false
-* loop over every border cell
-    * If a border cell is active, set the appropriate grow_n variable(s) to true.
+* loop over every cell
+    * If the cell should be active based on the rules above and the prev_state and prev_num_neighbors_active
+        * Set that cells next_state member to Active
+        * Check if the cell is on any borders, and set set the appropriate grow_n variable(s) to true
 * if any grow_n variable is true
     * call resize, specifying which directions to grow.
+* loop over every non-border cell
+    * If the cell has it's next_state set to active
+        * Call the set_cell_active function on that cell. This will flip the current_state value and adjust the 26 neighbor's current_num_neighbors_active values
 
 ### Resize ###
 
