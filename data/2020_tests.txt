@@ -100,3 +100,5 @@
 16,2,day16_input.txt,1429779530273
 17,1,test_cases/day17_test1.txt,112
 17,1,day17_input.txt,310
+17,2,test_cases/day17_test1.txt,848
+17,2,day17_input.txt,2056

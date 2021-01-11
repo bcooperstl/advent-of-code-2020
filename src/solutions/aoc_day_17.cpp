@@ -399,6 +399,421 @@ void Space::display()
     }
 }
 
+
+
+Hyperspace::Hyperspace()
+{
+    m_cells = NULL;
+    m_x_size = 0;
+    m_y_size = 0;
+    m_z_size = 0;
+    m_w_size = 0;
+}
+
+Hyperspace::~Hyperspace()
+{
+    if (m_cells)
+    {
+        deallocate_array(m_cells, m_x_size, m_y_size, m_z_size, m_w_size);
+    }
+    m_cells = NULL;
+}
+
+int Hyperspace::get_x_size()
+{
+    return m_x_size;
+}
+
+int Hyperspace::get_y_size()
+{
+    return m_y_size;
+}
+
+int Hyperspace::get_z_size()
+{
+    return m_z_size;
+}
+
+int Hyperspace::get_w_size()
+{
+    return m_w_size;
+}
+
+Cell **** Hyperspace::allocate_array(int x_size, int y_size, int z_size, int w_size)
+{
+    // Reminder - The arrays are accessed in [w][z][y][x] order.
+    Cell **** ret = new Cell *** [w_size];
+    for (int h=0; h<w_size; h++)
+    {
+        ret[h] = new Cell ** [z_size];
+        for (int i=0; i<z_size; i++)
+        {
+            ret[h][i] = new Cell * [y_size];
+            for (int j=0; j<y_size; j++)
+            {
+                ret[h][i][j] = new Cell[x_size];
+                for (int k=0; k<x_size; k++)
+                {
+                    // Initial clear state: inactive and no active neighbors for both current and previous cycles
+                    ret[h][i][j][k].curr_state=STATE_INACTIVE;
+                    ret[h][i][j][k].prev_state=STATE_INACTIVE;
+                    ret[h][i][j][k].curr_num_neighbors_active=0;
+                    ret[h][i][j][k].prev_num_neighbors_active=0;
+                    ret[h][i][j][k].next_state=STATE_INACTIVE;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+void Hyperspace::deallocate_array(Cell **** array, int x_size, int y_size, int z_size, int w_size)
+{
+    for (int h=0; h<w_size; h++)
+    {
+        for (int i=0; i<z_size; i++)
+        {
+            for (int j=0; j<y_size; j++)
+            {
+                delete [] array[h][i][j];
+            }
+            delete[] array[h][i];
+        }
+        delete[] array[h];
+    }
+    delete [] array;
+}
+
+/* 
+* resize - this function will resize the space by adding to any/all of the x, y, z, and w dimensions
+*/
+void Hyperspace::resize(bool grow_x, bool grow_y, bool grow_z, bool grow_w)
+{
+#ifdef DEBUG_DAY17
+    cout << "Resize with grow_x=" << grow_x << " grow_y=" << grow_y << " grow_z=" << grow_z << " grow_w=" << grow_w << endl;
+#endif
+    if (!(grow_x || grow_y || grow_z || grow_w))
+    {
+        // nothing to do. returning with same sized spapce
+#ifdef DEBUG_DAY17
+    cout << " Nothing to do. Returning" << endl;
+#endif
+        return;
+    }
+    int new_x_size = m_x_size + (grow_x ? 2 : 0);
+    int new_y_size = m_y_size + (grow_y ? 2 : 0);
+    int new_z_size = m_z_size + (grow_z ? 2 : 0);
+    int new_w_size = m_w_size + (grow_w ? 2 : 0);
+    
+    int x_offset = (grow_x ? 1 : 0);
+    int y_offset = (grow_y ? 1 : 0);
+    int z_offset = (grow_z ? 1 : 0);
+    int w_offset = (grow_w ? 1 : 0);
+    
+#ifdef DEBUG_DAY17
+    cout << " X size: old=" << m_x_size << " New=" << new_x_size << " offset=" << x_offset << endl;
+    cout << " Y size: old=" << m_y_size << " New=" << new_y_size << " offset=" << y_offset << endl;
+    cout << " Z size: old=" << m_z_size << " New=" << new_z_size << " offset=" << z_offset << endl;
+    cout << " W size: old=" << m_w_size << " New=" << new_w_size << " offset=" << w_offset << endl;
+#endif
+
+    Cell **** new_cells = allocate_array(new_x_size, new_y_size, new_z_size, new_w_size);
+    for (int w=0; w<m_w_size; w++)
+    {
+        for (int z=0; z<m_z_size; z++)
+        {
+            for (int y=0; y<m_y_size; y++)
+            {
+                for (int x=0; x<m_x_size; x++)
+                {
+                    new_cells[w+w_offset][z+z_offset][y+y_offset][x+x_offset] = m_cells[w][z][y][x];
+                }
+            }
+        }
+    }
+    deallocate_array(m_cells, m_x_size, m_y_size, m_z_size, m_w_size);
+    
+    m_cells = new_cells;
+    m_x_size = new_x_size;
+    m_y_size = new_y_size;
+    m_z_size = new_z_size;
+    m_w_size = new_w_size;
+#ifdef DEBUG_DAY17
+    cout << " After resize: " << endl;
+    display();
+#endif
+}
+
+/*
+init_from_plane - set up the space based on the input 2-D plane
+The space class will be created based on the 2-D plane of sized *m* x *n* passed in.
+* Create the initial array to be size x=m+2, y=n+2, z=3, w=3
+    * both states will be set to inactive and both counts will be set to 0
+* Loop over the 2-D plane with in_x and in_y
+    * If plane[in_x][in_y] is active
+        * call set_cell_active with x=in_x+1, y=in_y+1, z=1, w=1 . This will map that cell to the sub-space inside the 1-cell border.
+*/
+void Hyperspace::init_from_plane(vector<string> init_plane)
+{
+#ifdef DEBUG_DAY17
+    cout << "Init From Plane" << endl;
+    display();
+#endif
+
+    m_x_size=init_plane[0].size()+2;
+    m_y_size=init_plane.size()+2;
+    m_z_size=3;
+    m_w_size=3;
+    
+#ifdef DEBUG_DAY17
+    cout << " The " << init_plane[0].size() << " x " <<  init_plane.size() << " plane results in a x=" 
+         << m_x_size << " y=" << m_y_size << " z=" << m_z_size << " w=" << m_w_size << " 4-D array " << endl;
+#endif
+    m_cells = allocate_array(m_x_size, m_y_size, m_z_size, m_w_size);
+    
+    for (int y=0; y<init_plane.size(); y++)
+    {
+        string row = init_plane[y];
+        for (int x=0; x<row.size(); x++)
+        {
+            if (row[x]==STATE_ACTIVE)
+            {
+                set_cell_active(x+1, y+1, 1, 1); // map the cell as bordered on all sides by 1 inactive cell
+#ifdef DEBUG_DAY17
+                cout << " Active cell at " << x << "," << y << " results in an active cell in x=" << x+1 << " y=" << y+1 << " z=1 w=1" << endl;
+#endif
+            }
+        }
+    }
+}
+
+/*
+set_cell_active - set a cell active, and have the side effect of incrementing all 80 of the neighbors num_neighbors_active counts
+*/
+
+void Hyperspace::set_cell_active(int x, int y, int z, int w)
+{
+    // First mark the cell as active. Remember array is accessed by w,z,y,z
+    m_cells[w][z][y][x].curr_state=STATE_ACTIVE;
+    
+    // Now need to increment the active neighbor count on all 80 neighbors.
+    
+    // All 27 in above space and below space
+    for (int i=z-1; i<=z+1; i++)
+    {
+        for (int j=y-1; j<=y+1; j++)
+        {
+            for (int k=x-1; k<=x+1; k++)
+            {
+                m_cells[w-1][i][j][k].curr_num_neighbors_active++;
+                m_cells[w+1][i][j][k].curr_num_neighbors_active++;
+            }
+        }
+    }
+    
+    // All 9 in the same space, above plane and all 9 in the same space, below plane
+    for (int i=y-1; i<=y+1; i++)
+    {
+        for (int j=x-1; j<=x+1; j++)
+        {
+            m_cells[w][z-1][i][j].curr_num_neighbors_active++;
+            m_cells[w][z+1][i][j].curr_num_neighbors_active++;
+        }
+    }
+    
+    // All 3 in the same space and plane, above row and all 3 in the same space and plane, below row
+    for (int i=x-1; i<=x+1; i++)
+    {
+        m_cells[w][z][y-1][i].curr_num_neighbors_active++;
+        m_cells[w][z][y+1][i].curr_num_neighbors_active++;
+    }
+    
+    // Same space, same plane, same row, left and right of the current cell
+    m_cells[w][z][y][x-1].curr_num_neighbors_active++;
+    m_cells[w][z][y][x+1].curr_num_neighbors_active++;
+}
+
+/* run_cycle - this function will run through a cycle of the game
+*/
+
+void Hyperspace::run_cycle()
+{
+#ifdef DEBUG_DAY17
+    cout << "Run Cycle:" << endl;
+#endif
+    // Init the cells
+    for (int w=0; w<m_w_size; w++)
+    {
+        for (int z=0; z<m_z_size; z++)
+        {
+            for (int y=0; y<m_y_size; y++)
+            {
+                for (int x=0; x<m_x_size; x++)
+                {
+                    m_cells[w][z][y][x].prev_state = m_cells[w][z][y][x].curr_state;
+                    m_cells[w][z][y][x].prev_num_neighbors_active = m_cells[w][z][y][x].curr_num_neighbors_active;
+                    m_cells[w][z][y][x].curr_state = STATE_INACTIVE;
+                    m_cells[w][z][y][x].curr_num_neighbors_active = 0;
+                    m_cells[w][z][y][x].next_state = STATE_INACTIVE;
+                }
+            }
+        }
+    }
+    
+    // Looping over all cells to run the rules. Can detect if we need to grow while doing this
+    bool grow_x=false;
+    bool grow_y=false;
+    bool grow_z=false;
+    bool grow_w=false;
+    
+    for (int w=0; w<m_w_size; w++)
+    {
+        for (int z=0; z<m_z_size; z++)
+        {
+            for (int y=0; y<m_y_size; y++)
+            {
+                for (int x=0; x<m_x_size; x++)
+                {
+                    // First rule - cell was active, 2 or 3 neighbors active - cell stays active
+                    if ((m_cells[w][z][y][x].prev_state==STATE_ACTIVE) && 
+                        ((m_cells[w][z][y][x].prev_num_neighbors_active==2) || m_cells[w][z][y][x].prev_num_neighbors_active==3))
+                    {
+                        m_cells[w][z][y][x].next_state=STATE_ACTIVE;
+#ifdef DEBUG_DAY17
+                        cout << " Rule 1 (Active, 2 or 3 active neighbors) results in active cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << endl;
+#endif
+                    }
+                    // Second rule - cell was inactive and 3 neighbors are active - cell flips to active
+                    else if ((m_cells[w][z][y][x].prev_state==STATE_INACTIVE) && (m_cells[w][z][y][x].prev_num_neighbors_active==3))
+                    {
+                        m_cells[w][z][y][x].next_state=STATE_ACTIVE;
+#ifdef DEBUG_DAY17
+                        cout << " Rule 2 (Inactive, 3 active neighbors) results in active cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << endl;
+#endif
+                    }
+                    // Border checks
+                    if (m_cells[w][z][y][x].next_state==STATE_ACTIVE)
+                    {
+                        if ( (!grow_x) && ((x==0)||(x==(m_x_size-1))) )
+                        {
+#ifdef DEBUG_DAY17
+                            cout << "  Cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << " results in the X-border needing to grow. Setting grow_x to true" << endl;
+#endif
+                            grow_x=true;
+                        }
+                        if ( (!grow_y) && ((y==0)||(y==(m_y_size-1))) )
+                        {
+#ifdef DEBUG_DAY17
+                            cout << "  Cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << " results in the Y-border needing to grow. Setting grow_y to true" << endl;
+#endif
+                            grow_y=true;
+                        }
+                        if ( (!grow_z) && ((z==0)||(z==(m_z_size-1))) )
+                        {
+#ifdef DEBUG_DAY17
+                            cout << "  Cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << " results in the Z-border needing to grow. Setting grow_z to true" << endl;
+#endif
+                            grow_z=true;
+                        }
+                        if ( (!grow_w) && ((w==0)||(w==(m_w_size-1))) )
+                        {
+#ifdef DEBUG_DAY17
+                            cout << "  Cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << " results in the W-border needing to grow. Setting grow_w to true" << endl;
+#endif
+                            grow_w=true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Time to check if we need to grow
+    if (grow_x || grow_y || grow_z || grow_w)
+    {
+#ifdef DEBUG_DAY17
+        cout << " Resizing the Cells " << endl;
+#endif
+        resize(grow_x, grow_y, grow_z, grow_w);
+    }
+
+    // We are now assured that all of the border cells are inactive. Can activate all of the cells with next_state set to Active
+    for (int w=1; w<(m_w_size-1); w++)
+    {
+        for (int z=1; z<(m_z_size-1); z++)
+        {
+            for (int y=1; y<(m_y_size-1); y++)
+            {
+                for (int x=1; x<(m_x_size-1); x++)
+                {
+                    if (m_cells[w][z][y][x].next_state==STATE_ACTIVE)
+                    {
+#ifdef DEBUG_DAY17
+                        cout << "  Activating cell at x=" << x << " y=" << y << " z=" << z << " w=" << w << endl;
+#endif
+                        set_cell_active(x, y, z, w);
+                    }
+                }
+            }
+        }
+    }
+    return;
+}
+
+int Hyperspace::count_active()
+{
+    int count=0;
+    for (int w=0; w<m_w_size; w++)
+    {
+        for (int z=0; z<m_z_size; z++)
+        {
+            for (int y=0; y<m_y_size; y++)
+            {
+                for (int x=0; x<m_x_size; x++)
+                {
+                    if (m_cells[w][z][y][x].curr_state==STATE_ACTIVE)
+                    {
+                        count++;
+                    }
+                }
+            }
+        }
+    }
+    return count;
+}
+
+void Hyperspace::display()
+{
+    cout << "CURRENT         PREVIOUS           NEXT" << endl;
+    for (int w=0; w<m_w_size; w++)
+    {
+        for (int z=0; z<m_z_size; z++)
+        {
+            cout << "W = " << w << " Z = " << z << ":" << endl;
+            for (int y=0; y<m_y_size; y++)
+            {
+                for (int x=0; x<m_x_size; x++)
+                {
+                    cout << m_cells[w][z][y][x].curr_state;
+                }
+                cout << "            ";
+                for (int x=0; x<m_x_size; x++)
+                {
+                    cout << m_cells[w][z][y][x].prev_state;
+                }
+                cout << "            ";
+                for (int x=0; x<m_x_size; x++)
+                {
+                    cout << m_cells[w][z][y][x].next_state;
+                }
+                
+                cout << endl;
+            }
+            cout << endl;
+        }
+    }
+}
+
 AocDay17::AocDay17():AocDay(17)
 {
 }
@@ -439,5 +854,29 @@ string AocDay17::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << space.count_active();
+    return out.str();
+}
+
+string AocDay17::part2(string filename, vector<string> extra_args)
+{
+    vector<string> init_plane = read_input(filename);
+    
+    Hyperspace hyperspace;
+    hyperspace.init_from_plane(init_plane);
+    
+    cout << "The initial grid is:" << endl;
+    hyperspace.display();
+
+    for (int i=1; i<=6; i++)
+    {
+        hyperspace.run_cycle();
+        cout << "After running cycle " << i << " there are " << hyperspace.count_active() << " active cells:" << endl;
+        hyperspace.display();
+    }
+
+    cout << endl;
+    
+    ostringstream out;
+    out << hyperspace.count_active();
     return out.str();
 }
