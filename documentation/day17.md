@@ -1,6 +1,8 @@
-# Day 17, Part 1 #
+# Day 17, Parts 1 and 2#
 
 ## Requirements ##
+
+### Part 1 ###
 
 This program is a 3-D version of Conway's Game of Life. The initial plane of active (`#`) and inactive (`.`) is given. This plane is defined to exist in an infinitely large space of inactive cells.
 
@@ -11,6 +13,10 @@ The following rules apply:
 * If a cube is inactive (`.`) and 3 of its neighbors are active, that cube flips to active (`#`). Else is stays inactive.
 
 We need to process this for 6 rounds and then return the number of cubes in the active state after 6 rounds.
+
+### Part 2 ###
+
+Same as part 1, but for a 4-D space instead of a 3-D space. Same two rules apply exactly.
 
 ### Input Format ###
 
@@ -100,6 +106,14 @@ The space class will be created based on the 2-D plane of sized *m* x *n* passed
     * Call the display method to dump the space after the cycle
 * Get the count of active cells with the count_active method and return that value
 
+### Part 2 ###
+
+Part 2 will use the same Cell structure. I will create a Hyperspace class that is like the Space class, but includes 4 dimensions and the same functionality.
+
 ## Things I learned ##
 
 Been trying to design the algorith as best as possible. Fun challenge with that. Deciding the best way to do the resize method.
+
+### Part 2 ###
+
+Hoping for a simple converstion from Part 1 to Part 2, with just one extra dimension
