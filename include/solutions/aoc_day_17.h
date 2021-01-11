@@ -42,6 +42,31 @@ class Space
         void init_from_plane(vector<string> init_plane);
 };
 
+class Hyperspace
+{
+    private:
+        int m_x_size;
+        int m_y_size;
+        int m_z_size;
+        int m_w_size;
+        Cell **** m_cells; // this 4-D array is stored as [w][z][y][x] for ease of display.
+        Cell **** allocate_array(int x_size, int y_size, int z_size, int w_size);
+        void deallocate_array(Cell **** array, int x_size, int y_size, int z_size, int w_size);
+        void resize(bool grow_x, bool grow_y, bool grow_z, bool grow_w);
+    public:
+        Hyperspace();
+        ~Hyperspace();
+        int get_x_size();
+        int get_y_size();
+        int get_z_size();
+        int get_w_size();
+        void run_cycle();
+        int count_active();
+        void display();
+        void set_cell_active(int x, int y, int z, int w);
+        void init_from_plane(vector<string> init_plane);
+};
+
 class AocDay17 : public AocDay
 {
     private:
@@ -50,7 +75,7 @@ class AocDay17 : public AocDay
         AocDay17();
         ~AocDay17();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
