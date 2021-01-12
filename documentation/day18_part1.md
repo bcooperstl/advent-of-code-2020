@@ -53,6 +53,12 @@ The function signature will look like `long eval_expression(string::iterator & p
         * Recursively call eval_expression with (pos, end, level+1), storing the result in next_operand
     * Else if current is a closed parenthesis ')'
         * Return total
+    * Else if current is a plus sign '+'
+        * Set next_operation = OPERATION_ADD
+        * Continue with the next iteration of the loop
+    * Else if current is a multiplication sign '*'
+        * Set next_operation = OPERATION_MULTIPLY
+        * Continue with the next iteration of the loop
     * Else
         * Throw an error; Something is wrong here and I need to figure it out
     * If next_operation is OPERATION_ASSIGN
@@ -74,6 +80,7 @@ The function signature will look like `long eval_expression(string::iterator & p
 ## Things I learned ##
 
 Going to be passing around a string iterator for this solution. Need to pass it by reference so that it will come back in the correct location.
+With this, had to define variables to store the iterators instead of just taking the return values from the .begin() and .end() calls. Makes sense.
 
 ### Alternate Approaches ###
 
