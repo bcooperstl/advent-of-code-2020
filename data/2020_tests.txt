@@ -109,3 +109,4 @@
 18,1,test_cases/day18_test5.txt,12240
 18,1,test_cases/day18_test6.txt,13632
 18,1,test_cases/day18_test7.txt,26457
+18,1,day18_input.txt,24650385570008
