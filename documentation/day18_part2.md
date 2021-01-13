@@ -106,7 +106,8 @@ We know that we will have a value, then an operation, then a value, etc.
 
 ## Things I learned ##
 
-Wow, this algorithm was very interesting to come up with. I sure hope it works :-)
+Wow, this algorithm was very interesting to come up with for how to tokenize and then evaluate the expressions. I hope the recursive nature of it is correct.
+
 
 ### Alternate Approaches ###
 
