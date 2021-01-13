@@ -11,6 +11,8 @@ using namespace std;
 
 #define DEBUG_MATH
 
+#define TOKEN_NOT_FOUND -1
+
 AocDay18::AocDay18():AocDay(18)
 {
 }
@@ -274,11 +276,80 @@ void Expression::add_token(Token * token)
     m_tokens.push_back(token);
 }
 
-// TODO - this is where the big evaulate expression logic comes into play
+// Return the index to the first token of the given type. Returns -1 for not found
+int Expression::get_first_token_index(int type)
+{
+    for (int i=0; i<m_tokens.size(); i++)
+    {
+        if (m_tokens[i]->get_type() == type)
+        {
+            return i;
+        }
+    }
+    
+    return TOKEN_NOT_FOUND;
+}
+
+/* Planned approach
+We need to do all of the additions first, and all of the multiplications second.
+
+We know that we will have a value, then an operation, then a value, etc.
+
+* While an addition operations to be done is found at position i
+    * Call the add_operations(process(token[i-1].get_value(),token[i+1].get_value()) and store in result.
+    * Remove the i-1, i and i+1 tokens from the vector. 
+    * Create a literal_value from the result and store it at position i-1
+* While there are multiplications to be done
+    * Call the add_operations(process(token[i-1].get_value(),token[i+1].get_value()) and store in result.
+    * Remove the i-1, i and i+1 tokens from the vector. 
+    * Create a literal_value from the result and store it at position i-1
+* Return the one remaining literal_value as the result
+*/
+
 long Expression::get_value()
 {
-    
-    return 0;
+    cout << "Evaluating expression ";
+    display();
+    cout << endl;
+    int position = get_first_token_index(OPERATION_ADD);
+    while (position != TOKEN_NOT_FOUND)
+    {
+        cout << "  Performing addition of position=" << position-1 << " contents=[";
+        m_tokens[position-1]->display();
+        cout << "] and position=" << position+1 << " contents=[";
+        m_tokens[position+1]->display();
+        cout << "]" << endl;
+        long result = ((Day18Operation *)m_tokens[position])->perform(((Value *)m_tokens[position-1])->get_value(), ((Value *)m_tokens[position+1])->get_value());
+        delete m_tokens[position-1];
+        delete m_tokens[position];
+        delete m_tokens[position+1];
+        m_tokens.erase(m_tokens.begin()+(position-1), m_tokens.begin()+(position+1)+1); // remove from i-1 to i+1. Need to add the last "+1" because erase doesn't include that last element
+        m_tokens.insert(m_tokens.begin()+(position-1), new LiteralValue(result));
+        position = get_first_token_index(OPERATION_ADD);
+        display();
+    }
+    position = get_first_token_index(OPERATION_MULTIPLY);
+    while (position != TOKEN_NOT_FOUND)
+    {
+        cout << "  Performing multiplication of position=" << position-1 << " contents=[";
+        m_tokens[position-1]->display();
+        cout << "] and position=" << position+1 << " contents=[";
+        m_tokens[position+1]->display();
+        cout << "]" << endl;
+        long result = ((Day18Operation *)m_tokens[position])->perform(((Value *)m_tokens[position-1])->get_value(), ((Value *)m_tokens[position+1])->get_value());
+        delete m_tokens[position-1];
+        delete m_tokens[position];
+        delete m_tokens[position+1];
+        m_tokens.erase(m_tokens.begin()+(position-1), m_tokens.begin()+(position+1)+1); // remove from i-1 to i+1. Need to add the last "+1" because erase doesn't include that last element
+        m_tokens.insert(m_tokens.begin()+(position-1), new LiteralValue(result));
+        position = get_first_token_index(OPERATION_MULTIPLY);
+        display();
+    }
+    if (m_tokens.size() != 1)
+    {
+        cout << "SOMETHING WRONG HERE - SHOULD ONLY HAVE ONE TOKEN WHEN RETURNING" << endl;
+    }
+    return ((Value *)m_tokens[0])->get_value();
 }
 
 int Expression::get_type()

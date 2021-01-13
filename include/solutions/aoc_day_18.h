@@ -64,6 +64,7 @@ class Expression : public Value
 {
     private:
         vector<Token *> m_tokens;
+        int get_first_token_index(int type);
     public:
         Expression();
         ~Expression();
