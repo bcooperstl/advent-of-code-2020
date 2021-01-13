@@ -327,6 +327,7 @@ long Expression::get_value()
         m_tokens.insert(m_tokens.begin()+(position-1), new LiteralValue(result));
         position = get_first_token_index(OPERATION_ADD);
         display();
+        cout << endl;
     }
     position = get_first_token_index(OPERATION_MULTIPLY);
     while (position != TOKEN_NOT_FOUND)
@@ -344,6 +345,7 @@ long Expression::get_value()
         m_tokens.insert(m_tokens.begin()+(position-1), new LiteralValue(result));
         position = get_first_token_index(OPERATION_MULTIPLY);
         display();
+        cout << endl;
     }
     if (m_tokens.size() != 1)
     {
