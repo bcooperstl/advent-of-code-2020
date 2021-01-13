@@ -393,7 +393,7 @@ Expression * AocDay18::tokenize_expression(string input)
     
     for (int i=0; i<input.size(); i++)
     {
-        char ch = input[0];
+        char ch = input[i];
 #ifdef DEBUG_MATH
         cout << " Evaluating [" << ch << "]. ";
 #endif
