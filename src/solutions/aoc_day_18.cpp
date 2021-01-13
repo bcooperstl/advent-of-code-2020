@@ -356,3 +356,118 @@ int Expression::get_type()
 {
     return VALUE_EXPRESSION;
 }
+
+/* Initial Plan
+* Define a `vector<Expression *> expression_stack` variable to hold a stack of expressions. This is used for nested parentheses.
+* Allocate an `Expression * parent` to stand for the equation as a whole
+* Append `parent` onto `expression_stack`
+* Set `Expression * current_expression` to `parent`
+* Loop over all of the characters in the input string with current
+    * If current is a space
+        * Drop it and continue with the next iteration of the loop
+    * Else if current is a digit between 0 and 9
+        * Create a literal_value object from this digit, and append this to `current_expression`
+    * Else if current is an open parenthesis `(`
+        * Create an expression next.
+        * Append next to current_expression.
+        * Append current_expression onto the expression_stack
+        * Set current_expression to next
+    * Else if current is a closed parenthesis ')'
+        * Set current_expression to expression_stack.back()
+        * pop the back element off of expression_stack
+    * Else if current is a plus sign '+'
+        * Append a add_operation to the current_expression
+    * Else if current is a multiplication sign '*'
+        * Append a multiply_operation to the current_expression
+    * Else
+        * Throw an error; Something is wrong here and I need to figure it out
+* Return parent
+*/
+
+Expression * AocDay18::tokenize_expression(string input)
+{
+    vector<Expression *> expression_stack;
+    Expression * parent = new Expression();
+    //expression_stack.append(parent);
+    Expression * current_expression = parent;
+    
+    for (int i=0; i<input.size(); i++)
+    {
+        char ch = input[0];
+#ifdef DEBUG_MATH
+        cout << " Evaluating [" << ch << "]. ";
+#endif
+        if (ch == ' ')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Skipping a space" << endl;
+#endif
+            continue;
+        }
+        else if (ch >= '0' && ch <= '9')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Adding literal value of " << ch-'0' << endl;
+#endif
+            current_expression->add_token(new LiteralValue(ch-'0'));
+        }
+        else if (ch == '(')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Creating next level expression and setting to current expression" << endl;
+#endif
+            Expression * next = new Expression();
+            current_expression->add_token(next);
+            expression_stack.push_back(current_expression);
+            current_expression = next;
+        }
+        else if (ch == ')')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Popping off back of expression stack" << endl;
+#endif
+            current_expression = expression_stack.back();
+            expression_stack.pop_back();
+        }
+        else if (ch == '+')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Adding Addition operation" << endl;
+#endif
+            current_expression->add_token(new AddOperation());
+        }
+        else if (ch == '*')
+        {
+#ifdef DEBUG_MATH
+            cout << "  Adding Multiplication operaiton" << endl;
+#endif
+            current_expression->add_token(new MultiplyOperation());
+            continue;
+        }
+        else
+        {
+            cout << "*****INVALID INPUT******" << endl;
+            return 0;
+        }
+    }
+    return parent;
+}
+
+string AocDay18::part2(string filename, vector<string> extra_args)
+{
+    vector<string> expressions = read_input(filename);
+    long sum = 0;
+    for (vector<string>::iterator expression_iter = expressions.begin(); expression_iter != expressions.end(); ++expression_iter)
+    {
+        cout << "Evaluating expression " << *expression_iter << endl;
+        Expression * expression = tokenize_expression(*expression_iter);
+        long value = expression->get_value();
+        cout << "result = " << value;
+        delete expression;
+        sum+=value;
+    }
+    ostringstream out;
+    out << sum;
+    return out.str();
+}
+

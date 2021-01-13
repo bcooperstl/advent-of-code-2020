@@ -78,12 +78,13 @@ class AocDay18 : public AocDay
 {
     private:
         vector<string> read_input(string filename);
+        Expression * tokenize_expression(string input);
         long eval_expression(string::iterator & pos, string::iterator & end, int level);
     public:
         AocDay18();
         ~AocDay18();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
