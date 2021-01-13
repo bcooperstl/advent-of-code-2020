@@ -177,3 +177,111 @@ string AocDay18::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+AddOperation::AddOperation()
+{
+}
+
+AddOperation::~AddOperation()
+{
+}
+
+void AddOperation::display()
+{
+    cout << " + ";
+}
+
+long AddOperation::perform(long left, long right)
+{
+    return left + right;
+}
+
+int AddOperation::get_type()
+{
+    return OPERATION_ADD;
+}
+
+MultiplyOperation::MultiplyOperation()
+{
+}
+
+MultiplyOperation::~MultiplyOperation()
+{
+}
+
+void MultiplyOperation::display()
+{
+    cout << " * ";
+}
+
+long MultiplyOperation::perform(long left, long right)
+{
+    return left * right;
+}
+
+int MultiplyOperation::get_type()
+{
+    return OPERATION_MULTIPLY;
+}
+
+LiteralValue::LiteralValue(long value)
+{
+    m_value = value;
+}
+
+LiteralValue::~LiteralValue()
+{
+}
+
+void LiteralValue::display()
+{
+    cout << m_value;
+}
+
+long LiteralValue::get_value()
+{
+    return m_value;
+}
+
+int LiteralValue::get_type()
+{
+    return VALUE_LITERAL;
+}
+
+Expression::Expression()
+{
+}
+
+Expression::~Expression()
+{
+    for (int i=0; i<m_tokens.size(); i++)
+    {
+        delete m_tokens[i];
+    }
+}
+
+void Expression::display()
+{
+    cout << " ( ";
+    for (int i=0; i<m_tokens.size(); i++)
+    {
+        m_tokens[i]->display();
+    }
+    cout << " ) ";
+}
+
+void Expression::add_token(Token * token)
+{
+    m_tokens.push_back(token);
+}
+
+// TODO - this is where the big evaulate expression logic comes into play
+long Expression::get_value()
+{
+    
+    return 0;
+}
+
+int Expression::get_type()
+{
+    return VALUE_EXPRESSION;
+}
