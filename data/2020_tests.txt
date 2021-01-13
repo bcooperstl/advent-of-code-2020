@@ -110,3 +110,10 @@
 18,1,test_cases/day18_test6.txt,13632
 18,1,test_cases/day18_test7.txt,26457
 18,1,day18_input.txt,24650385570008
+18,2,test_cases/day18_test1.txt,231
+18,2,test_cases/day18_test2.txt,51
+18,2,test_cases/day18_test3.txt,46
+18,2,test_cases/day18_test4.txt,1445
+18,2,test_cases/day18_test5.txt,669060
+18,2,test_cases/day18_test6.txt,23340
+18,2,test_cases/day18_test7.txt,694173
