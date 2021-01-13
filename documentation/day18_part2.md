@@ -57,7 +57,7 @@ It will contain an add_token method to add a token to its internal vector
 
 * Define a `vector<Expression *> expression_stack` variable to hold a stack of expressions. This is used for nested parentheses.
 * Allocate an `Expression * parent` to stand for the equation as a whole
-* Append `parent` onto `expression_stack`
+* Append `parent` onto `expression_stack` **NOT NEEDED**
 * Set `Expression * current_expression` to `parent`
 * Loop over all of the characters in the input string with current
     * If current is a space
@@ -108,6 +108,7 @@ We know that we will have a value, then an operation, then a value, etc.
 
 Wow, this algorithm was very interesting to come up with for how to tokenize and then evaluate the expressions. I hope the recursive nature of it is correct.
 
+I've used a vector so many times, but I've never treated it as a stack before with the back() and pop_back() operations.
 
 ### Alternate Approaches ###
 
