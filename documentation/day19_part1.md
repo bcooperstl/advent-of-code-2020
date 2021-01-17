@@ -66,8 +66,8 @@ Create a rule structure with the following
 I will use the following three regular expressions to parse the rules:
 
 1) Identify a literal rule: `^(\d+): \"(.+)\"$`. This extracts the rule number in element 1 and the literal in element 2.
-2) Identify a single-choice rule: `^(\d+): \"([\d ]+)$`. This extracts the rule number in element 1, and the list of child rules in element 2.
-3) Identify a multi-choice rule: `^(\d+): \"([\d ]+) \| ([\d ]+)$`. This extracts the rule number in element 1, and the first list of child rules in element 2, and the second list of child rules in element 3.
+2) Identify a single-choice rule: `^(\d+): ([\d ]+)$`. This extracts the rule number in element 1, and the list of child rules in element 2.
+3) Identify a multi-choice rule: `^(\d+): ([\d ]+) \| ([\d ]+)$`. This extracts the rule number in element 1, and the first list of child rules in element 2, and the second list of child rules in element 3.
 
 For both the single-choice and multi-choice rules, I can then use the existing FileUtiil's split_line_to_ints function to split this up.
 
