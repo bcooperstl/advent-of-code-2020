@@ -119,3 +119,4 @@
 18,2,test_cases/day18_test7.txt,694173
 18,2,day18_input.txt,158183007916215
 19,1,test_cases/day19_test1.txt,2
+19,2,day19_input.txt,216
