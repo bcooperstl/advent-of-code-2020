@@ -8,8 +8,8 @@
 #include "aoc_day_19.h"
 #include "file_utils.h"
 
-#define DEBUG_REGEX
-//#define DEBUG_DAY19
+//#define DEBUG_REGEX
+#define DEBUG_DAY19
 
 using namespace std;
 
@@ -123,37 +123,73 @@ void AocDay19::parse_input(string filename, vector<Rule *> & rules, vector<strin
     return;
 }
 
+/*
+Planned approach
 
-/* planned approach
-* Parse the intput as described above.
-* Initialize the error_rate_sum to 0.
-* Create a map<int, bool> valid_values to store my cache.
-* Loop over the list of nearby_tickets with ticket
-    * For each value in ticket
-        * If the value is in the valid_values cache
-            * If the cache shows it false (invalid)
-                * Add the value to error_rate_sum
-            * Continue to the next value
-        * Else (the value is not in the cache)
-            * Set `found` to false
-            * For each field
-                * If the value is valid for the field
-                    * Set `found` to true
-                    * Stop looking at other fields
-            * If found is false
-                * Add the value to error_rate_sum
-            * Store the value and found into the valid_values cache
-* Return the error_rate_sum
-
+From the parsed input
+* Add all of the Rule * objects to a map<int, Rule *> based upon the rule_number as the key.
+* Loop over all of the rules in the rules_list
+    * If the rule is not a literal
+        * For each of the choices
+            * Iterate over the child_rule_numbers.
+                * Find the matching rule from the map, and append that to the appropriate child_rules vector
+    * If the rule is a literal
+        * append the literal_value in the possible_matches vector. It will be the only element there for literlas
+        * Set the has_processed_matches to true
 */
+
+void AocDay19::clean_up_rules(vector<Rule *> & rules, map<int, Rule *> & rule_lookup_map)
+{
+    for (int i=0; i<rules.size(); i++)
+    {
+        rule_lookup_map[rules[i]->rule_number]=rules[i];
+    }
+    
+    for (int i=0; i<rules.size(); i++)
+    {
+        Rule * rule = rules[i];
+#ifdef DEBUG_DAY19
+        cout << "Cleaning up rule " << rule->rule_number << endl;
+#endif
+        if (rule->type!=literal)
+        {
+#ifdef DEBUG_DAY19
+            cout << " Non-literal rule with " << rule->num_choices << " choices" << endl;
+#endif
+            for (int j=0; j<rule->num_choices; j++)
+            {
+                for (int k=0; k<rule->child_rule_numbers[j].size(); k++)
+                {
+                    rule->child_rules[j].push_back(rule_lookup_map[rule->child_rule_numbers[j][k]]);
+#ifdef DEBUG_DAY19
+                    cout << "  Fixing up child " << j << " element " << k << " to point to rule number " << rule->child_rule_numbers[j][k] << ". Points to " << rule->child_rules[j][k]->rule_number << "." << endl;
+#endif
+                }
+            }
+        }
+        else
+        {
+#ifdef DEBUG_DAY19
+            cout << " Literal rule with value " << rule->literal_value << endl;
+#endif
+            rule->possible_matches.push_back(rule->literal_value);
+            rule->has_processed_matches = true;
+        }
+    }
+    
+}
 
 string AocDay19::part1(string filename, vector<string> extra_args)
 {
     vector<Rule *> rules;
     vector<string> messages;
     int matching_messages = 0;
+    map<int, Rule *> rule_lookup_map;
     
     parse_input(filename, rules, messages);
+    
+    clean_up_rules(rules, rule_lookup_map);
+    
     
     // Cleanup dynamically allocated rules
     for (int i=0; i<rules.size(); i++)
@@ -186,7 +222,7 @@ Rule * AocDay19::create_literal_rule(int rule_number, string literal_value)
 Rule * AocDay19::create_single_choice_rule(int rule_number, vector<int> child_rule_numbers)
 {
     Rule * rule = new Rule();
-    rule->type=literal;
+    rule->type=single_choice;
     rule->rule_number=rule_number;
     rule->num_choices=1;
     rule->literal_value="";
@@ -203,7 +239,7 @@ Rule * AocDay19::create_single_choice_rule(int rule_number, vector<int> child_ru
 Rule * AocDay19::create_multi_choice_rule(int rule_number, vector<int> first_child_rule_numbers, vector<int> second_child_rule_numbers)
 {
     Rule * rule = new Rule();
-    rule->type=literal;
+    rule->type=multi_choice;
     rule->rule_number=rule_number;
     rule->num_choices=2;
     rule->literal_value="";
