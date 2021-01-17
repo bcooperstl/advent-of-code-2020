@@ -179,6 +179,101 @@ void AocDay19::clean_up_rules(vector<Rule *> & rules, map<int, Rule *> & rule_lo
     
 }
 
+vector<string> AocDay19::build_permutations_from_rule_list(vector<Rule *> rule_list)
+{
+    vector<string> ret = rule_list[0]->possible_matches;
+    for (int i=1; i<rule_list.size(); i++)
+    {
+        vector<string> next;
+        for (int j=0; j<ret.size(); j++)
+        {
+            for (int k=0; k<rule_list[i]->possible_matches.size(); k++)
+            {
+                next.push_back(ret[j]+rule_list[i]->possible_matches[k]);
+            }
+        }
+        ret = next;
+    }
+    return ret;
+}
+
+/* Planned approach
+This should work, given the statement that there are no loops in our rules.
+In the event that this is overwhelming, I'll make a second list of rules based on those that can be reached from 0, and see if that makes it better. If not, I'll need to come up with a new method.
+
+* Initialize a work_done boolean to true.
+* do
+    * set work_done to false
+    * Loop over every rule in the rule list with rule
+        * if rule.has_processed_matches is true, then continue; it's already done
+        * Loop over all of the elements in both child_rules vectors
+            * If all of them have has_processed_matches set to true
+                * Make the list of possible_matches by combining those from the child rules appropriately
+                * set this rule's has_processed_matches to true
+                * Set work_done to true so that we know we did something
+* while work_done is true
+*/
+
+void AocDay19::build_possible_matches(vector<Rule *> & rules)
+{
+    bool work_done = true;
+    do
+    {
+#ifdef DEBUG_DAY19
+        cout << "New Possible Matches Iteration" << endl;
+#endif
+        work_done = false;
+        for (int i=0; i<rules.size(); i++)
+        {
+            Rule * rule = rules[i];
+            if (rule->has_processed_matches == true)
+            {
+                continue; // already done
+            }
+#ifdef DEBUG_DAY19
+            cout << " Checking non-processed rule " << rule->rule_number << endl;
+#endif
+            bool all_children_processed = true;
+            for (int j=0; j<rule->num_choices; j++)
+            {
+                for (int k=0; k<rule->child_rules[j].size(); k++)
+                {
+                    if (rule->child_rules[j][k]->has_processed_matches == false)
+                    {
+#ifdef DEBUG_DAY19
+                        cout << "  Cannot process because child rule " << rule->child_rule_numbers[j][k] << " is not yet processed" << endl;
+#endif
+                        all_children_processed = false;
+                    }
+                }
+            }
+            if (all_children_processed == false)
+            {
+                continue;
+            }
+            for (int j=0; j<rule->num_choices; j++)
+            {
+                vector<string> permutations = build_permutations_from_rule_list(rule->child_rules[j]);
+#ifdef DEBUG_DAY19_VERBOSE
+                cout << "  Child " << j << " contains the possible permutations:" << endl;
+                for (int k=0; k<permutations.size(); k++)
+                {
+                    cout << "   " << permutations[k] << endl;
+                }
+#endif
+                rule->possible_matches.insert(rule->possible_matches.end(), permutations.begin(), permutations.end());
+            }
+#ifdef DEBUG_DAY19
+            cout << "  Marking rule " << rule->rule_number << " has_processed_matches to true" << endl;
+#endif
+            rule->has_processed_matches = true;
+            work_done = true;
+        }
+    } while (work_done == true);
+    
+    
+}
+
 string AocDay19::part1(string filename, vector<string> extra_args)
 {
     vector<Rule *> rules;
@@ -190,6 +285,33 @@ string AocDay19::part1(string filename, vector<string> extra_args)
     
     clean_up_rules(rules, rule_lookup_map);
     
+    build_possible_matches(rules);
+    
+    Rule * rule0 = rule_lookup_map[0];
+    
+    // time to loop over the messages
+    for (int i=0; i<messages.size(); i++)
+    {
+        bool found = false;
+        for (int j=0; j<rule0->possible_matches.size(); j++)
+        {
+            if (messages[i] == rule0->possible_matches[j])
+            {
+                cout << "Message " << messages[i] << " found in rule 0" << endl;
+                found = true;
+                break;
+            }
+        }
+        if (found == true)
+        {
+            cout << " Incrementing matching_message counter" << endl;
+            matching_messages++;
+        }
+        else
+        {
+            cout << "Message " << messages[i] << " not found" << endl;
+        }
+    }
     
     // Cleanup dynamically allocated rules
     for (int i=0; i<rules.size(); i++)

@@ -38,6 +38,8 @@ class AocDay19 : public AocDay
         Rule * create_multi_choice_rule(int rule_number, vector<int> first_child_rule_numbers, vector<int> second_child_rule_numbers);
         void parse_input(string filename, vector<Rule *> & rules, vector<string> & messages);
         void clean_up_rules(vector<Rule *> & rules, map<int, Rule *> & rule_lookup_map);
+        vector<string> build_permutations_from_rule_list(vector<Rule *> rule_list);
+        void build_possible_matches(vector<Rule *> & rules);
     public:
         AocDay19();
         ~AocDay19();
