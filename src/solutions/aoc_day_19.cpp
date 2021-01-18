@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <map>
+#include <set>
 
 #include "aoc_day_19.h"
 #include "file_utils.h"
@@ -311,6 +312,22 @@ string AocDay19::part1(string filename, vector<string> extra_args)
         {
             cout << "Message " << messages[i] << " not found" << endl;
         }
+    }
+    
+    // Analysis for part 2
+    for (int i=0; i<rules.size(); i++)
+    {
+        set<int> sizes;
+        for (int j=0; j<rules[i]->possible_matches.size(); j++)
+        {
+            sizes.insert(rules[i]->possible_matches[j].size());
+        }
+        cout << "Rule " << rules[i]->rule_number << " has matches of " << sizes.size() << " size:";
+        for (set<int>::iterator pos = sizes.begin(); pos != sizes.end(); ++pos)
+        {
+            cout << " " << *pos;
+        }
+        cout << endl;
     }
     
     // Cleanup dynamically allocated rules
