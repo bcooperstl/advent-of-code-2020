@@ -366,7 +366,7 @@ Define max_n=(length(message)-length_42)/(length_42 + length_31)
     * if ((length_for_m_copies < length_42) || (length_for_m_copies % length_42 != 0))
         * Invalid value for n - either there aren't enough characters for m=1 to work, or there will be characters leftover
         * Continue to the next n
-    * set m = length_for_m_copies % length_42
+    * set m = length_for_m_copies / length_42
     * set found = true
     * for (int i=0; i<m+n; i++) // check for the rule 42 matches
         * Create the substring of message for the length_42 characters starting at i*length_42
@@ -389,7 +389,7 @@ bool AocDay19::does_message_match_rules_42_31(string message, Rule * rule42, Rul
     int length_31=rule31->possible_matches[0].size();
     
     int min_n=1;
-    int max_n=((message.size()-length_42)/(length_42+length_31));
+    int max_n=((message.size()-length_42)/(length_42+length_31))+1;
     
 #ifdef DEBUG_DAY19
     cout << " The message is length " << message.size() << ". Length of 42 is " << length_42 
@@ -408,7 +408,7 @@ bool AocDay19::does_message_match_rules_42_31(string message, Rule * rule42, Rul
 #endif
             continue;
         }
-        int m = length_for_m_copies % length_42;
+        int m = length_for_m_copies / length_42;
 #ifdef DEBUG_DAY19
         cout << "   m value is set to " << m 
              << ". Results in " << m+n << " instances of rule 42 and " << n << " instances of rule 31" << endl;
@@ -506,12 +506,13 @@ string AocDay19::part2(string filename, vector<string> extra_args)
     // time to loop over the messages
     for (int i=0; i<messages.size(); i++)
     {
+        cout << "Checking message [" << messages[i] << "]" << endl;
         bool found = false;
         for (int j=0; j<rule0->possible_matches.size(); j++)
         {
             if (messages[i] == rule0->possible_matches[j])
             {
-                cout << "Message " << messages[i] << " found in rule 0" << endl;
+                cout << " Message " << messages[i] << " found in rule 0" << endl;
                 found = true;
                 break;
             }
