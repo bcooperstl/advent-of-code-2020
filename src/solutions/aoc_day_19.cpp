@@ -4,12 +4,13 @@
 #include <sstream>
 #include <cstdlib>
 #include <map>
+#include <set>
 
 #include "aoc_day_19.h"
 #include "file_utils.h"
 
 //#define DEBUG_REGEX
-#define DEBUG_DAY19
+//#define DEBUG_DAY19
 
 using namespace std;
 
@@ -307,6 +308,225 @@ string AocDay19::part1(string filename, vector<string> extra_args)
             cout << " Incrementing matching_message counter" << endl;
             matching_messages++;
         }
+        else
+        {
+            cout << "Message " << messages[i] << " not found" << endl;
+        }
+    }
+    
+    /*
+    // Analysis for part 2
+    for (int i=0; i<rules.size(); i++)
+    {
+        set<int> sizes;
+        for (int j=0; j<rules[i]->possible_matches.size(); j++)
+        {
+            sizes.insert(rules[i]->possible_matches[j].size());
+        }
+        cout << "Rule " << rules[i]->rule_number << " has matches of " << sizes.size() << " size:";
+        for (set<int>::iterator pos = sizes.begin(); pos != sizes.end(); ++pos)
+        {
+            cout << " " << *pos;
+        }
+        cout << endl;
+    }
+    */
+    
+    // Cleanup dynamically allocated rules
+    for (int i=0; i<rules.size(); i++)
+    {
+        delete rules[i];
+    }
+    
+    ostringstream out;
+    out << matching_messages;
+    return out.str();
+}
+
+/* Initial plan
+Rule 8 can match either:
+1) 42
+2) 42 followed by 8
+
+Rule 11 can match either:
+1) 42 followed by 31
+2) 42 followed by 11 followed by 31
+
+
+Combining these together, we have *m* copies of rule 42, followed by *n* copies of rule 42, followed by *n* copies of rule 31.  
+For this, both *m* and *n* must be greater than or equal to 1.
+
+define length_42=length of the rule 42 matches
+define length_31=length of the rule 31 matches
+Define min_n=1;
+Define max_n=(length(message)-length_42)/(length_42 + length_31)
+
+* for (n between min_n and max_n)
+    * length_for_m_copies = length(message)-n*(length_42+length_31)
+    * if ((length_for_m_copies < length_42) || (length_for_m_copies % length_42 != 0))
+        * Invalid value for n - either there aren't enough characters for m=1 to work, or there will be characters leftover
+        * Continue to the next n
+    * set m = length_for_m_copies / length_42
+    * set found = true
+    * for (int i=0; i<m+n; i++) // check for the rule 42 matches
+        * Create the substring of message for the length_42 characters starting at i*length_42
+        * If rule_42 does not have that substring as a possible match
+            * set found to false
+    * for (int i=0; i<n; i++)
+        * Create the substring of messages for the length_31 characters starting at (m+n)*length_42 + i*length_31
+        * If rule_31 does not have that substring as a possible match
+            * set found to false
+    * If found is true, we have found the match and this is one to be added for the output. 
+        * We are Done processing. Break out of the loop
+*/
+
+bool AocDay19::does_message_match_rules_42_31(string message, Rule * rule42, Rule * rule31)
+{
+#ifdef DEBUG_DAY19
+    cout << " Checking message [" << message << "] against rules 42 and 31" << endl;
+#endif
+    int length_42=rule42->possible_matches[0].size(); // analysis shows all of these matches are the same length
+    int length_31=rule31->possible_matches[0].size();
+    
+    int min_n=1;
+    int max_n=((message.size()-length_42)/(length_42+length_31))+1;
+    
+#ifdef DEBUG_DAY19
+    cout << " The message is length " << message.size() << ". Length of 42 is " << length_42 
+         << ". Length of 31 is " << length_31 << ". This means that there can be between 1 and " << max_n << " for the n value" << endl;
+#endif
+    for (int n=min_n; n<=max_n; n++)
+    {
+        int length_for_m_copies = message.size()-(n*(length_42+length_31));
+#ifdef DEBUG_DAY19
+        cout << "  n value of " << n << " results in a length of " << length_for_m_copies << " for copies of m" << endl;
+#endif
+        if ((length_for_m_copies < length_42) || (length_for_m_copies % length_42 != 0))
+        {
+#ifdef DEBUG_DAY19
+            cout << "   Invalid possible value for length_for_m_copies - either too small or not an even multiple" << endl;
+#endif
+            continue;
+        }
+        int m = length_for_m_copies / length_42;
+#ifdef DEBUG_DAY19
+        cout << "   m value is set to " << m 
+             << ". Results in " << m+n << " instances of rule 42 and " << n << " instances of rule 31" << endl;
+#endif
+        bool found = true;
+        for (int i=0; i<m+n; i++)
+        {
+            string portion = message.substr(i*length_42, length_42);
+#ifdef DEBUG_DAY19
+            cout << "    Checking [" << portion << "] against rule 42 from characters " << i*length_42 << " to " << (i*length_42)+length_42-1 << endl;
+#endif
+            bool portion_found = false;
+            for (int i=0; i<rule42->possible_matches.size(); i++)
+            {
+                if (portion == rule42->possible_matches[i])
+                {
+#ifdef DEBUG_DAY19
+                    cout << "     Rule 42 match found" << endl;
+#endif
+                    portion_found=true;
+                    break;
+                }
+            }
+            if (!portion_found)
+            {
+#ifdef DEBUG_DAY19
+                cout << "     No Rule 42 match found. This combination of n and m is invalid" << endl;
+#endif
+                found=false;
+                break;
+            }
+        }
+        if (!found) // short circuit. skip checking the n copies of rule31
+        {
+            continue;
+        }
+        for (int i=0; i<n; i++)
+        {
+            string portion = message.substr((m+n)*length_42 + i*length_31, length_31);
+#ifdef DEBUG_DAY19
+            cout << "    Checking [" << portion << "] against rule 31 from characters " << (m+n)*length_42 + i*length_31 << " to " << (m+n)*length_42 + i*length_31+length_31-1 << endl;
+#endif
+            bool portion_found = false;
+            for (int i=0; i<rule31->possible_matches.size(); i++)
+            {
+                if (portion == rule31->possible_matches[i])
+                {
+#ifdef DEBUG_DAY19
+                    cout << "     Rule 31 match found" << endl;
+#endif
+                    portion_found=true;
+                    break;
+                }
+            }
+            if (!portion_found)
+            {
+#ifdef DEBUG_DAY19
+                cout << "     No Rule 31 match found. This combination of n and m is invalid" << endl;
+#endif
+                found=false;
+                break;
+            }
+        }
+        if (found == true)
+        {
+#ifdef DEBUG_DAY19
+            cout << "  Match has been found. Returning true" << endl;
+#endif
+            return true;
+        }
+    }
+#ifdef DEBUG_DAY19
+    cout << "  No match is found. Returnign false" << endl;
+#endif
+    return false;
+}
+
+string AocDay19::part2(string filename, vector<string> extra_args)
+{
+    vector<Rule *> rules;
+    vector<string> messages;
+    int matching_messages = 0;
+    map<int, Rule *> rule_lookup_map;
+    
+    parse_input(filename, rules, messages);
+    
+    clean_up_rules(rules, rule_lookup_map);
+    
+    build_possible_matches(rules);
+    
+    Rule * rule0 = rule_lookup_map[0];
+    Rule * rule42 = rule_lookup_map[42];
+    Rule * rule31 = rule_lookup_map[31];
+    
+    // time to loop over the messages
+    for (int i=0; i<messages.size(); i++)
+    {
+        cout << "Checking message [" << messages[i] << "]" << endl;
+        bool found = false;
+        for (int j=0; j<rule0->possible_matches.size(); j++)
+        {
+            if (messages[i] == rule0->possible_matches[j])
+            {
+                cout << " Message " << messages[i] << " found in rule 0" << endl;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            found = does_message_match_rules_42_31(messages[i], rule42, rule31);
+        }
+        if (found == true)
+        {
+            cout << " Incrementing matching_message counter" << endl;
+            matching_messages++;
+        }
+        
         else
         {
             cout << "Message " << messages[i] << " not found" << endl;

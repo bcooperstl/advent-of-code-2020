@@ -40,11 +40,12 @@ class AocDay19 : public AocDay
         void clean_up_rules(vector<Rule *> & rules, map<int, Rule *> & rule_lookup_map);
         vector<string> build_permutations_from_rule_list(vector<Rule *> rule_list);
         void build_possible_matches(vector<Rule *> & rules);
+        bool does_message_match_rules_42_31(string message, Rule * rule42, Rule * rule31);
     public:
         AocDay19();
         ~AocDay19();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
