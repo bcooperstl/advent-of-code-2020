@@ -10,7 +10,7 @@
 #include "file_utils.h"
 
 //#define DEBUG_REGEX
-#define DEBUG_DAY19
+//#define DEBUG_DAY19
 
 using namespace std;
 
