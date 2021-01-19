@@ -154,11 +154,11 @@ Define max_n=(length(message)-length_42)/(length_42 + length_31)
 
 * for (n between min_n and max_n)
     * length_for_m_copies = length(message)-n*(length_42+length_31)
-    * if ((length_for_m_copies <= length_42) || (length_for_m_copies % length_42 != 0))
+    * if ((length_for_m_copies < length_42) || (length_for_m_copies % length_42 != 0))
         * Invalid value for n - either there aren't enough characters for m=1 to work, or there will be characters leftover
         * Continue to the next n
     * set m = length_for_m_copies % length_42
-    * set found = = true
+    * set found = true
     * for (int i=0; i<m+n; i++) // check for the rule 42 matches
         * Create the substring of message for the length_42 characters starting at i*length_42
         * If rule_42 does not have that substring as a possible match
