@@ -69,11 +69,11 @@ The fronts will be encoded with the characters in clockwise order. The backs wil
 
 Reading left-to-right, the North border is `..##.#..#.`. 
 Since this is clockwise for the front, this encodes as `0011010010=210`. 
-Working counter-clockwize for the back, this encodes as `0100101100=300`.
+Working counter-clockwise for the back, this encodes as `0100101100=300`.
 
 Reading top-to-bottom, the East border is `...#.##..#`.
 Since this is clockwise for the front, this encodes as `0001011001=89`. 
-Working counter-clockwize for the back, this encodes as `1001101000=616`.
+Working counter-clockwise for the back, this encodes as `1001101000=616`.
 
 Reading left-to-right, the South border is `..###..###`.
 However, this needs to be clocksize for the front, so it encodes as `1110011100=924`.
@@ -128,6 +128,120 @@ Working over each tile, I will:
 
 ### Building Border Values ###
 
+* Initialize all 8 border values to 0.
+* For i from 0 to 9
+    * if map[0][i] is '#' (The i'th value on the north edge is #; bit=1)
+        * Set border[NorthFront] |= (1 << 9-i) // For clockwise NorthFront, most sig bit is first (i=0) and least sig bit is last (i=9)
+        * Set border[NorthBack] |= (1 << i) // For counter-clockwise NorthBack, most sig bit is last (i=9) and least sig bit is first (i=0)
+    * if map[9][i] is '#' (The i'th value on the south edge is #; bit=1)
+        * Set border[SouthFront] |= (1 << i) // For clockwise SouthFront, most sig bit is last (i=9) and least sig bit is first (i=0)
+        * Set border[SouthBack] |= (1 << 9-i) // For counter-clockwise SouthBack, most sig bit is first (i=0) and least sig bit is last (i=9)
+    * if map[i][0] is '#' (The i'th value on the west edge is #; bit=1)
+        * Set border[WestFront] |= (1 << i) // For clockwise WestFront, most sig bit is last (i=9) and least sig bit is first (i=0)
+        * Set border[WestBack] |= (1 << 9-i) // For counter-clockwise WestBack, most sig bit is first (i=0) and least sig bit is last (i=9)
+    * if map[i][9] is '#' (The i'th value on the east edge is #; bit=1)
+        * Set border[EastFront] |= (1 << 9-i) // For clockwise EastFront, most sig bit is first (i=0) and least sig bit is last (i=9)
+        * Set border[EastBack] |= (1 << i) // For counter-clockwise EastBack, most sig bit is last (i=9) and least sig bit is first (i=0)
+
+### Manipulations ###
+
+All of these (except right rotate 0 degrees) will copy the current border values to old_borders and their current map to old_map. 
+They will then update the internal structures as described below.
+
+#### Right Rotate 0 Degrees ####
+* Do nothing. If only they all were so easy.
+
+#### Right Rotate 90 Degrees ####
+* borders[EastFront]  = old[NorthFront]
+* borders[EastBack]   = old[NorthBack]
+* borders[SouthFront] = old[EastFront]
+* borders[SouthBack]  = old[EastBack]
+* borders[WestFront]  = old[SouthFront]
+* borders[WestBack]   = old[SouthBack]
+* borders[NorthFront] = old[WestFront]
+* borders[NorthBack]  = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[9-old_y][old_x]=old_map[old_x][old_y]
+
+#### Right Rotate 180 Degrees ####
+* borders[SouthFront] = old[NorthFront]
+* borders[SouthBack]  = old[NorthBack]
+* borders[WestFront]  = old[EastFront]
+* borders[WestBack]   = old[EastBack]
+* borders[NorthFront] = old[SouthFront]
+* borders[NorthBack]  = old[SouthBack]
+* borders[EastFront]  = old[WestFront]
+* borders[EastBack]   = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[9-old_x][9-old_y]=old_map[old_x][old_y]
+
+#### Right Rotate 270 Degrees ####
+* borders[WestFront]  = old[NorthFront]
+* borders[WestBack]   = old[NorthBack]
+* borders[NorthFront] = old[EastFront]
+* borders[NorthBack]  = old[EastBack]
+* borders[EastFront]  = old[SouthFront]
+* borders[EastBack]   = old[SouthBack]
+* borders[SouthFront] = old[WestFront]
+* borders[SouthBack]  = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[old_y][9-old_x]=old_map[old_x][old_y]
+
+#### Horizonal Flip ####
+* borders[SouthBack]  = old[NorthFront]
+* borders[SouthFront] = old[NorthBack]
+* borders[EastBack]   = old[EastFront]
+* borders[EastFront]  = old[EastBack]
+* borders[NorthBack]  = old[SouthFront]
+* borders[NorthFront] = old[SouthBack]
+* borders[WestBack]   = old[WestFront]
+* borders[WestFront]  = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[old_x][9-old_y]=old_map[old_x][old_y]
+
+#### Vertical Flip ####
+* borders[NorthBack]  = old[NorthFront]
+* borders[NorthFront] = old[NorthBack]
+* borders[WestBack]   = old[EastFront]
+* borders[WestFront]  = old[EastBack]
+* borders[SouthBack]  = old[SouthFront]
+* borders[SouthFront] = old[SouthBack]
+* borders[EastBack]   = old[WestFront]
+* borders[EastFront]  = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[9-old_x][old_y]=old_map[old_x][old_y]
+
+#### Forward Slash Flip / ####
+* borders[EastBack]   = old[NorthFront]
+* borders[EastFront]  = old[NorthBack]
+* borders[NorthBack]  = old[EastFront]
+* borders[NorthFront] = old[EastBack]
+* borders[WestBack]   = old[SouthFront]
+* borders[WestFront]  = old[SouthBack]
+* borders[SouthBack]  = old[WestFront]
+* borders[SouthFront] = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[9-old_y][9-old_x]=old_map[old_x][old_y]
+
+#### Backward Slash Flip \ ####
+* borders[WestBack]   = old[NorthFront]
+* borders[WestFront]  = old[NorthBack]
+* borders[SouthBack]  = old[EastFront]
+* borders[SouthFront] = old[EastBack]
+* borders[EastBack]   = old[SouthFront]
+* borders[EastFront]  = old[SouthBack]
+* borders[NorthBack]  = old[WestFront]
+* borders[NorthFront] = old[WestBack]
+* for old_x from 0 to 9
+    * for old_y from 0 to 9
+        * map[old_y][old_x]=old_map[old_x][old_y]
+
 
 ## Test Programs ##
 
@@ -135,4 +249,4 @@ See [day20_test_program.md](Day 20 Test Program) for a description of the test p
 
 ## Things I learned ##
 
-
+So much fun developing the algorithm and flushing it out. Going back to my very basic group-theory class to think about the possible arrangements of a square.
