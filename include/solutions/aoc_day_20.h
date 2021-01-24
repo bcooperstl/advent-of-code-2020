@@ -43,6 +43,7 @@ class Tile
         int m_id;
         char m_map[TILE_SIDE_LEN][TILE_SIDE_LEN]; // first index is row top-to-bottom, second index is column left-to-right
         int m_borders[TILE_NUM_BORDERS];
+        void build_border_values();
     public:
         Tile(int id);
         ~Tile();

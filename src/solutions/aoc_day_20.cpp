@@ -19,11 +19,6 @@ Tile::Tile(int id)
             m_map[i][j]=TILE_CHAR_OFF;
         }
     }
-    
-    for (int i=0; i<TILE_NUM_BORDERS; i++)
-    {
-        m_borders[i]=0;
-    }
 }
 
 Tile::~Tile()
@@ -39,6 +34,7 @@ void Tile::set_map(vector<string> map_lines)
             m_map[i][j]=map_lines[i][j];
         }
     }
+    build_border_values();
 }
 
 void Tile::display()
@@ -89,6 +85,54 @@ map<Border, int> Tile::get_borders()
         borders[static_cast<Border>(i)]=m_borders[i];
     }
     return borders;
+}
+
+/* Initial plan:
+* Initialize all 8 border values to 0.
+* For i from 0 to 9
+    * if map[0][i] is '#' (The i'th value on the north edge is #; bit=1)
+        * Set border[NorthFront] |= (1 << 9-i) // For clockwise NorthFront, most sig bit is first (i=0) and least sig bit is last (i=9)
+        * Set border[NorthBack] |= (1 << i) // For counter-clockwise NorthBack, most sig bit is last (i=9) and least sig bit is first (i=0)
+    * if map[9][i] is '#' (The i'th value on the south edge is #; bit=1)
+        * Set border[SouthFront] |= (1 << i) // For clockwise SouthFront, most sig bit is last (i=9) and least sig bit is first (i=0)
+        * Set border[SouthBack] |= (1 << 9-i) // For counter-clockwise SouthBack, most sig bit is first (i=0) and least sig bit is last (i=9)
+    * if map[i][0] is '#' (The i'th value on the west edge is #; bit=1)
+        * Set border[WestFront] |= (1 << i) // For clockwise WestFront, most sig bit is last (i=9) and least sig bit is first (i=0)
+        * Set border[WestBack] |= (1 << 9-i) // For counter-clockwise WestBack, most sig bit is first (i=0) and least sig bit is last (i=9)
+    * if map[i][9] is '#' (The i'th value on the east edge is #; bit=1)
+        * Set border[EastFront] |= (1 << 9-i) // For clockwise EastFront, most sig bit is first (i=0) and least sig bit is last (i=9)
+        * Set border[EastBack] |= (1 << i) // For counter-clockwise EastBack, most sig bit is last (i=9) and least sig bit is first (i=0)
+*/
+void Tile::build_border_values()
+{
+    for (int i=0; i<TILE_NUM_BORDERS; i++)
+    {
+        m_borders[i]=0;
+    }
+    
+    for (int i=0; i<=9; i++)
+    {
+        if (m_map[0][i] == TILE_CHAR_ON)
+        {
+            m_borders[NorthFront] |= (1 << (9-i));
+            m_borders[NorthBack]  |= (1 << i);
+        }
+        if (m_map[9][i] == TILE_CHAR_ON)
+        {
+            m_borders[SouthFront] |= (1 << i);
+            m_borders[SouthBack]  |= (1 << (9-i));
+        }
+        if (m_map[i][0] == TILE_CHAR_ON)
+        {
+            m_borders[WestFront] |= (1 << i);
+            m_borders[WestBack]  |= (1 << (9-i));
+        }
+        if (m_map[i][9] == TILE_CHAR_ON)
+        {
+            m_borders[EastFront] |= (1 << (9-i));
+            m_borders[EastBack]  |= (1 << i);
+        }
+    }
 }
 
 AocDay20::AocDay20():AocDay(20)
