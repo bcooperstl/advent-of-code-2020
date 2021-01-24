@@ -45,7 +45,8 @@ I hope I don't need to make another test case.
 
 ## Approach ##
 
-This will be done in several iterations, and descried as such.
+This will be done in several iterations, and descried as such.  
+1) The first iteration involves getting the Tile class working.
 
 ### Representing a tile's border as an integer ###
 
