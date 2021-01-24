@@ -62,7 +62,7 @@ vector<string> Tile::get_tile_map()
     ostringstream line;
     for (int y=0; y<TILE_SIDE_LEN; y++)
     {
-        line.clear();
+        line.str("");
         for (int x=0; x<TILE_SIDE_LEN; x++)
         {
             line << m_map[y][x];
