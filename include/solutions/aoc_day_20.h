@@ -25,7 +25,7 @@ enum Border
     WestBack=7
 };
 
-enum Manipulations
+enum Manipulation
 {
     RightRotate0Degrees=0,
     RightRotate90Degrees=1,
