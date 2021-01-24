@@ -3,12 +3,15 @@
 
 #include "aoc_day.h"
 
+#include <vector>
+#include <map>
+
 #define TILE_CHAR_OFF '.'
 #define TILE_CHAR_ON '#'
 
 #define TILE_SIDE_LEN 10
 
-#define NUM_BORDERS 8
+#define TILE_NUM_BORDERS 8
 
 enum Border
 {
@@ -38,12 +41,18 @@ class Tile
 {
     private:
         int m_id;
-        char m_map[TILE_SIDE_LEN][TILE_SIDE_LEN];
-        int m_borders[NUM_BORDERS];
+        char m_map[TILE_SIDE_LEN][TILE_SIDE_LEN]; // first index is row top-to-bottom, second index is column left-to-right
+        int m_borders[TILE_NUM_BORDERS];
     public:
         Tile(int id);
         ~Tile();
+        void set_map(vector<string> map_lines);
         void display();
+        int get_id();
+        vector<string> get_tile_map(); // used for testing.
+        int get_border(Border border);
+        map<Border, int> get_borders();
+        
         
 };
 
