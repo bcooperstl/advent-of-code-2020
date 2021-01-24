@@ -6,19 +6,24 @@
 
 using namespace std;
 
-vector<string> get_test_case()
+vector<string> get_expected_map(Manipulation manipulation)
 {
     vector<string> ret;
-    ret.push_back("........#.");
-    ret.push_back(".###......");
-    ret.push_back(".###......");
-    ret.push_back(".###......");
-    ret.push_back("#...##....");
-    ret.push_back("....##....");
-    ret.push_back("..........");
-    ret.push_back(".##......#");
-    ret.push_back(".##.......");
-    ret.push_back("...#......");
+    switch (manipulation)
+    {
+        case RightRotate0Degrees:
+            ret.push_back("........#.");
+            ret.push_back(".###......");
+            ret.push_back(".###......");
+            ret.push_back(".###......");
+            ret.push_back("#...##....");
+            ret.push_back("....##....");
+            ret.push_back("..........");
+            ret.push_back(".##......#");
+            ret.push_back(".##.......");
+            ret.push_back("...#......");
+            break;
+    }
     return ret;
 }
 
@@ -108,7 +113,32 @@ void compare_borders(map<Border, int> expected, map<Border, int> actual)
         cout << "WestBack border matches" << endl;
     }    
 }
- 
+
+void compare_map(vector<string> expected, vector<string> actual)
+{
+    bool equal = true;
+    for (int i=0; i<TILE_SIDE_LEN; i++)
+    {
+        if (expected[i] != actual[i])
+        {
+            equal = false;
+        }
+    }
+    if (equal)
+    {
+        cout << "Maps match" << endl;
+    }
+    else
+    {
+        cout << "Map mismatch!!!" << endl;
+        cout << "Expected    Actual" << endl;
+        for (int i=0; i<TILE_SIDE_LEN; i++)
+        {
+            cout << expected[i] << "  " << actual[i] << endl;
+        }
+    }
+}
+
 void test_base_tile()
 {
     map<Border, int> expected_borders;
@@ -125,6 +155,7 @@ void test_base_tile()
     map<Border, int> actual_borders = tile.get_borders();
     cout << "Testing after construction of tile" << endl;
     compare_borders(expected_borders, actual_borders);
+    compare_map(get_expected_map(RightRotate0Degrees), tile.get_tile_map());
 }
 
 int main (int argc, char * argv[])
