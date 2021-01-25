@@ -49,6 +49,9 @@ This will be done in several iterations, and descried as such.
 1) The first iteration involves getting the Tile class working.
 2) Classifying the tiles are corners, edges, or middle pieces.
 3) Answering part 1. Since I have the four corners, I can just multiply their IDs to get the answer. This still doesn't build the puzzle.
+4) Working the puzzle. This will use the classified tiles and lookup map to solve the puzzle.
+5) Creating the 8 copies (all 8 different orientations) of the puzzle.
+6) Finding Sea Monsters, which will solve Part 2.
 
 ### Representing a tile's border as an integer ###
 
@@ -264,6 +267,28 @@ In order to get to a solution for part 1:
 * Build a border lookup map
 * Classify the tiles into those that are corners, edges, and middles.
 * Multiply the IDs of the four corner tiles together. This will give the result.
+
+## Solving the puzzle ##
+
+Analyis has shown that there are only two possible pieces that share an edge. There is no extra de-duplication logic needed. As such, we can work through the puzzle like a book to solve it.
+
+There will be a `Tile * puzzle[MAX_PUZZLE_SIZE][MAX_PUZZLE_SIZE]` array that will store pointers to each of the tiles.
+
+The `puzzle_edge_size` will be calculated by taking the square root of the total number of tiles.
+
+### Aligning the top-left corner ###
+
+* Choose the first corner in the list to go in the top-left of the puzzle.
+* Identify which two sides have only one Tile in the lookup map:
+    * If it is North and West, this is good to go.
+    * If it is North and East, do a RightRotate270Degrees to align them to North and West
+    * If it is East and South, do a RightRotate180Degrees to align them to North and West
+    * If it is South and West, do a RightRotate90Degrees to align them to North and West.
+* Place the properly-rotate tile in the puzzle[0][0] location.
+
+### Working across the top row
+
+### Determining how to 
 
 ## Test Programs ##
 
