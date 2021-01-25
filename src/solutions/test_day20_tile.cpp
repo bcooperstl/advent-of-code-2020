@@ -6,6 +6,25 @@
 
 using namespace std;
 
+map<Border, int> get_expected_borders(Manipulation manipulation)
+{
+    map<Border, int> expected_borders;
+    switch (manipulation)
+    {
+        case RightRotate0Degrees:
+            expected_borders[NorthFront] =2;
+            expected_borders[NorthBack]  =256;
+            expected_borders[EastFront]  =4;
+            expected_borders[EastBack]   =128;
+            expected_borders[SouthFront] =8;
+            expected_borders[SouthBack]  =64;
+            expected_borders[WestFront]  =16;
+            expected_borders[WestBack]   =32;
+            break;
+    }
+    return expected_borders;
+}
+
 vector<string> get_expected_map(Manipulation manipulation)
 {
     vector<string> ret;
@@ -141,20 +160,10 @@ void compare_map(vector<string> expected, vector<string> actual)
 
 void test_base_tile()
 {
-    map<Border, int> expected_borders;
-    expected_borders[NorthFront] =2;
-    expected_borders[NorthBack]  =256;
-    expected_borders[EastFront]  =4;
-    expected_borders[EastBack]   =128;
-    expected_borders[SouthFront] =8;
-    expected_borders[SouthBack]  =64;
-    expected_borders[WestFront]  =16;
-    expected_borders[WestBack]   =32;
-    
     Tile tile = generate_base_tile();
     map<Border, int> actual_borders = tile.get_borders();
     cout << "Testing after construction of tile" << endl;
-    compare_borders(expected_borders, actual_borders);
+    compare_borders(get_expected_borders(RightRotate0Degrees), actual_borders);
     compare_map(get_expected_map(RightRotate0Degrees), tile.get_tile_map());
 }
 
