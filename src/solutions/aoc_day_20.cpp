@@ -469,6 +469,11 @@ string AocDay20::part1(string filename, vector<string> extra_args)
     build_border_lookup_map(tiles, border_lookup_map);
     classify_tiles(tiles, corners, edges, middles, border_lookup_map);
     
+    for (int i=0; i<corners.size(); i++)
+    {
+        product *= (long long)(corners[i]->get_id());
+    }
+    
     ostringstream out;
     out << product;
     
