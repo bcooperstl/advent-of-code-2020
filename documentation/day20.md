@@ -47,7 +47,8 @@ I hope I don't need to make another test case.
 
 This will be done in several iterations, and descried as such.  
 1) The first iteration involves getting the Tile class working.
-2) Classifying the tiles are corners, edges, or middle pices.
+2) Classifying the tiles are corners, edges, or middle pieces.
+3) Answering part 1. Since I have the four corners, I can just multiply their IDs to get the answer. This still doesn't build the puzzle.
 
 ### Representing a tile's border as an integer ###
 
@@ -256,7 +257,13 @@ This will use the minimum value for a Front/Back border pair, to eliminate dupli
 
 Then, I will go through each tile, count how many sides only have one element in the map for their side's border value, and assign those tiles to the corner, edge, and middle vectors.
 
+## Part 1 Main Program ##
+In order to get to a solution for part 1:
 
+* Parse the input as described above
+* Build a border lookup map
+* Classify the tiles into those that are corners, edges, and middles.
+* Multiply the IDs of the four corner tiles together. This will give the result.
 
 ## Test Programs ##
 
