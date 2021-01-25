@@ -77,6 +77,11 @@ int Tile::get_border(Border border)
     return m_borders[border];
 }
 
+int Tile::get_min_border(Border border1, Border border2)
+{
+    return (m_borders[border1] <= m_borders[border2] ? m_borders[border1] : m_borders[border2]);
+}
+
 map<Border, int> Tile::get_borders()
 {
     map<Border, int> borders;
@@ -305,6 +310,124 @@ AocDay20::~AocDay20()
 {
 }
 
+/*
+First I will build up a `map<int, vector<Tile *>>` border_index that will point each border value to a list of tiles with that value.  
+This will use the minimum value for a Front/Back border pair, to eliminate duplicating sides and to make identificaiton easier.  
+*/
+
+void AocDay20::build_border_lookup_map(vector<Tile *> & tiles, map<int, vector<Tile *>> & lookup_map)
+{
+    lookup_map.clear();
+    for (int i=0; i<tiles.size(); i++)
+    {
+        Tile * tile = tiles[i];
+        int north_value = tile->get_min_border(NorthFront, NorthBack);
+        if (lookup_map.find(north_value) == lookup_map.end())
+        {
+            lookup_map[north_value]=vector<Tile *>();
+        }
+        lookup_map[north_value].push_back(tile);
+
+        int east_value = tile->get_min_border(EastFront, EastBack);
+        if (lookup_map.find(east_value) == lookup_map.end())
+        {
+            lookup_map[east_value]=vector<Tile *>();
+        }
+        lookup_map[east_value].push_back(tile);
+
+        int south_value = tile->get_min_border(SouthFront, SouthBack);
+        if (lookup_map.find(south_value) == lookup_map.end())
+        {
+            lookup_map[south_value]=vector<Tile *>();
+        }
+        lookup_map[south_value].push_back(tile);
+
+        int west_value = tile->get_min_border(WestFront, WestBack);
+        if (lookup_map.find(west_value) == lookup_map.end())
+        {
+            lookup_map[west_value]=vector<Tile *>();
+        }
+        lookup_map[west_value].push_back(tile);
+    }
+}     
+
+void AocDay20::classify_tiles(vector<Tile *> & tiles, vector<Tile *> & corners, vector<Tile *> & edges, vector<Tile *> & middles, map<int, vector<Tile *>> & lookup_map)
+{
+    for (int i=0; i<tiles.size(); i++)
+    {
+        Tile * tile = tiles[i];
+        cout << "Classifying tile " << tile->get_id() << endl;;
+        int num_singles=0;
+        
+        int north_value = tile->get_min_border(NorthFront, NorthBack);
+        if (lookup_map[north_value].size() == 1)
+        {
+            cout << " North value " << north_value << " only appears once; this must be on the outside." << endl;
+            num_singles++;
+        }
+        else
+        {
+            cout << " North value " << north_value << " appears " << lookup_map[north_value].size() << " times. This must be in the middle." << endl;
+        }
+
+        int east_value = tile->get_min_border(EastFront, EastBack);
+        if (lookup_map[east_value].size() == 1)
+        {
+            cout << " East value " << east_value << " only appears once; this must be on the outside." << endl;
+            num_singles++;
+        }
+        else
+        {
+            cout << " East value " << east_value << " appears " << lookup_map[east_value].size() << " times. This must be in the middle." << endl;
+        }
+
+        int south_value = tile->get_min_border(SouthFront, SouthBack);
+        if (lookup_map[south_value].size() == 1)
+        {
+            cout << " South value " << south_value << " only appears once; this must be on the outside." << endl;
+            num_singles++;
+        }
+        else
+        {
+            cout << " South value " << south_value << " appears " << lookup_map[south_value].size() << " times. This must be in the middle." << endl;
+        }
+
+        int west_value = tile->get_min_border(WestFront, WestBack);
+        if (lookup_map[west_value].size() == 1)
+        {
+            cout << " West value " << west_value << " only appears once; this must be on the outside." << endl;
+            num_singles++;
+        }
+        else
+        {
+            cout << " West value " << west_value << " appears " << lookup_map[west_value].size() << " times. This must be in the middle." << endl;
+        }
+        
+        switch (num_singles)
+        {
+            case 0:
+                cout << " There are no single sides. This must be a middle tile" << endl;
+                middles.push_back(tile);
+                break;
+            case 1:
+                cout << " There is one single sides. This must be an edge tile" << endl;
+                edges.push_back(tile);
+                break;
+            case 2:
+                cout << " There are two single sides. This must be a corner tile" << endl;
+                corners.push_back(tile);
+                break;
+            default:
+                cout << "****** There are " << num_singles << " singles. This is an ERROR*****" << endl;
+                break;
+        }
+    }
+    cout << "Of the " << tiles.size() << " tiles:" << endl;
+    cout << "  There are " << corners.size() << " corners" << endl;
+    cout << "  There are " << edges.size() << " edges" << endl;
+    cout << "  There are " << middles.size() << " middles" << endl;
+}
+
 void AocDay20::parse_input(string filename, vector<Tile *> & tiles)
 {
     FileUtils fileutils;
@@ -333,7 +456,8 @@ void AocDay20::parse_input(string filename, vector<Tile *> & tiles)
 
 string AocDay20::part1(string filename, vector<string> extra_args)
 {
-    vector<Tile *> tiles;
+    vector<Tile *> tiles, corners, edges, middles;
+    map<int, vector<Tile *>> border_lookup_map;
     parse_input(filename, tiles);
     long long product = 1;
 
@@ -341,6 +465,9 @@ string AocDay20::part1(string filename, vector<string> extra_args)
     {
         tiles[i]->display();
     }
+    
+    build_border_lookup_map(tiles, border_lookup_map);
+    classify_tiles(tiles, corners, edges, middles, border_lookup_map);
     
     ostringstream out;
     out << product;
