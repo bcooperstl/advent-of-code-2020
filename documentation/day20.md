@@ -163,7 +163,7 @@ They will then update the internal structures as described below.
 * borders[NorthBack]  = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[9-old_y][old_x]=old_map[old_x][old_y]
+        * map[old_x][9-old_y]=old_map[old_y][old_x]
 
 #### Right Rotate 180 Degrees ####
 * borders[SouthFront] = old[NorthFront]
@@ -176,7 +176,7 @@ They will then update the internal structures as described below.
 * borders[EastBack]   = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[9-old_x][9-old_y]=old_map[old_x][old_y]
+        * map[9-old_y][9-old_x]=old_map[old_y][old_x]
 
 #### Right Rotate 270 Degrees ####
 * borders[WestFront]  = old[NorthFront]
@@ -189,7 +189,7 @@ They will then update the internal structures as described below.
 * borders[SouthBack]  = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[old_y][9-old_x]=old_map[old_x][old_y]
+        * map[9-old_x][old_y]=old_map[old_y][old_x]
 
 #### Horizonal Flip ####
 * borders[SouthBack]  = old[NorthFront]
@@ -202,7 +202,7 @@ They will then update the internal structures as described below.
 * borders[WestFront]  = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[old_x][9-old_y]=old_map[old_x][old_y]
+        * map[9-old_y][old_x]=old_map[old_y][old_x]
 
 #### Vertical Flip ####
 * borders[NorthBack]  = old[NorthFront]
@@ -215,7 +215,7 @@ They will then update the internal structures as described below.
 * borders[EastFront]  = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[9-old_x][old_y]=old_map[old_x][old_y]
+        * map[old_y][9-old_x]=old_map[old_y][old_x]
 
 #### Forward Slash Flip / ####
 * borders[EastBack]   = old[NorthFront]
@@ -228,7 +228,7 @@ They will then update the internal structures as described below.
 * borders[SouthFront] = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[9-old_y][9-old_x]=old_map[old_x][old_y]
+        * map[9-old_x][9-old_y]=old_map[old_y][old_x]
 
 #### Backward Slash Flip \ ####
 * borders[WestBack]   = old[NorthFront]
@@ -241,7 +241,7 @@ They will then update the internal structures as described below.
 * borders[NorthFront] = old[WestBack]
 * for old_x from 0 to 9
     * for old_y from 0 to 9
-        * map[old_y][old_x]=old_map[old_x][old_y]
+        * map[old_x][old_y]=old_map[old_y][old_x]
 
 
 ## Test Programs ##
@@ -251,3 +251,7 @@ See [day20_test_program.md](Day 20 Test Program) for a description of the test p
 ## Things I learned ##
 
 So much fun developing the algorithm and flushing it out. Going back to my very basic group-theory class to think about the possible arrangements of a square.
+
+Using static_cast to convert from ints to enums.
+
+
