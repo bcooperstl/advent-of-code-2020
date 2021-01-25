@@ -47,6 +47,7 @@ I hope I don't need to make another test case.
 
 This will be done in several iterations, and descried as such.  
 1) The first iteration involves getting the Tile class working.
+2) Classifying the tiles are corners, edges, or middle pices.
 
 ### Representing a tile's border as an integer ###
 
@@ -54,6 +55,9 @@ Instead of having to do many many string comparisons, a tile's border can be rep
 I will encode `.` characters a 0 bits, and `#` characters as 1 bits.
 I will first encode all four sides. Since tiles can be flipped, there will be two encodings per side - front and back.  
 The fronts will be encoded with the characters in clockwise order. The backs will be encoded in counter-clockwise order.
+
+In phase 2, I added a check to see if any sides are palindromes. This would make more complexity for the solution, so I ran that check first. There were none, so that is good.
+
 
 #### An Example ####
     Tile 2311:
@@ -242,6 +246,16 @@ They will then update the internal structures as described below.
 * for old_x from 0 to 9
     * for old_y from 0 to 9
         * map[old_x][old_y]=old_map[old_y][old_x]
+
+### Classifying Tiles ###
+
+Tiles will be classified as either corners, edges, or middle pieces, based on whether there are 2, 1, or 0 sides that only occur once.
+
+First I will build up a `map<int, vector<Tile *>>` border_index that will point each border value to a list of tiles with that value.  
+This will use the minimum value for a Front/Back border pair, to eliminate duplicating sides and to make identificaiton easier.  
+
+Then, I will go through each tile, count how many sides only have one element in the map for their side's border value, and assign those tiles to the corner, edge, and middle vectors.
+
 
 
 ## Test Programs ##
