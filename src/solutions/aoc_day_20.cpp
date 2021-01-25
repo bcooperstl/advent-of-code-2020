@@ -135,6 +135,151 @@ void Tile::build_border_values()
     }
 }
 
+/*
+All of these (except right rotate 0 degrees) will copy the current border values to old_borders and their current map to old_map. 
+They will then update the internal structures as described below.
+
+See the documentation that describes how to perform these 8 manipulations on the tile. Not going to copy-and-paste 100 lines in here.
+*/
+
+void Tile::perform_manipulation(Manipulation manipulation)
+{
+    map<Border, int> old_borders = get_borders();
+    char old_map[TILE_SIDE_LEN][TILE_SIDE_LEN];
+    for (int y=0; y<TILE_SIDE_LEN; y++)
+    {
+        for (int x=0; x<TILE_SIDE_LEN; x++)
+        {
+            old_map[y][x]=m_map[y][x];
+        }
+    }
+    switch (manipulation)
+    {
+        case RightRotate0Degrees:
+            // Nothing to do here for the right-rotate 0 degrees
+            break;
+        case RightRotate90Degrees:
+            m_borders[EastFront]  = old_borders[NorthFront];
+            m_borders[EastBack]   = old_borders[NorthBack];
+            m_borders[SouthFront] = old_borders[EastFront];
+            m_borders[SouthBack]  = old_borders[EastBack];
+            m_borders[WestFront]  = old_borders[SouthFront];
+            m_borders[WestBack]   = old_borders[SouthBack];
+            m_borders[NorthFront] = old_borders[WestFront];
+            m_borders[NorthBack]  = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[old_x][9-old_y] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case RightRotate180Degrees:
+            m_borders[SouthFront] = old_borders[NorthFront];
+            m_borders[SouthBack]  = old_borders[NorthBack];
+            m_borders[WestFront]  = old_borders[EastFront];
+            m_borders[WestBack]   = old_borders[EastBack];
+            m_borders[NorthFront] = old_borders[SouthFront];
+            m_borders[NorthBack]  = old_borders[SouthBack];
+            m_borders[EastFront]  = old_borders[WestFront];
+            m_borders[EastBack]   = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[9-old_y][9-old_x] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case RightRotate270Degrees:
+            m_borders[WestFront]  = old_borders[NorthFront];
+            m_borders[WestBack]   = old_borders[NorthBack];
+            m_borders[NorthFront] = old_borders[EastFront];
+            m_borders[NorthBack]  = old_borders[EastBack];
+            m_borders[EastFront]  = old_borders[SouthFront];
+            m_borders[EastBack]   = old_borders[SouthBack];
+            m_borders[SouthFront] = old_borders[WestFront];
+            m_borders[SouthBack]  = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[9-old_x][old_y] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case HorizontalFlip:
+            m_borders[SouthBack]  = old_borders[NorthFront];
+            m_borders[SouthFront] = old_borders[NorthBack];
+            m_borders[EastBack]   = old_borders[EastFront];
+            m_borders[EastFront]  = old_borders[EastBack];
+            m_borders[NorthBack]  = old_borders[SouthFront];
+            m_borders[NorthFront] = old_borders[SouthBack];
+            m_borders[WestBack]   = old_borders[WestFront];
+            m_borders[WestFront]  = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[9-old_y][old_x] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case VerticalFlip:
+            m_borders[NorthBack]  = old_borders[NorthFront];
+            m_borders[NorthFront] = old_borders[NorthBack];
+            m_borders[WestBack]   = old_borders[EastFront];
+            m_borders[WestFront]  = old_borders[EastBack];
+            m_borders[SouthBack]  = old_borders[SouthFront];
+            m_borders[SouthFront] = old_borders[SouthBack];
+            m_borders[EastBack]   = old_borders[WestFront];
+            m_borders[EastFront]  = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[old_y][9-old_x] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case ForwardSlashFlip:
+            m_borders[EastBack]   = old_borders[NorthFront];
+            m_borders[EastFront]  = old_borders[NorthBack];
+            m_borders[NorthBack]  = old_borders[EastFront];
+            m_borders[NorthFront] = old_borders[EastBack];
+            m_borders[WestBack]   = old_borders[SouthFront];
+            m_borders[WestFront]  = old_borders[SouthBack];
+            m_borders[SouthBack]  = old_borders[WestFront];
+            m_borders[SouthFront] = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[9-old_x][9-old_y] = old_map[old_y][old_x];
+                }
+            }
+            break;
+        case BackwardSlashFlip:
+            m_borders[WestBack]   = old_borders[NorthFront];
+            m_borders[WestFront]  = old_borders[NorthBack];
+            m_borders[SouthBack]  = old_borders[EastFront];
+            m_borders[SouthFront] = old_borders[EastBack];
+            m_borders[EastBack]   = old_borders[SouthFront];
+            m_borders[EastFront]  = old_borders[SouthBack];
+            m_borders[NorthBack]  = old_borders[WestFront];
+            m_borders[NorthFront] = old_borders[WestBack];  
+            for (int old_y=0; old_y<TILE_SIDE_LEN; old_y++)
+            {
+                for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
+                {
+                    m_map[old_x][old_y] = old_map[old_y][old_x];
+                }
+            }
+            break;            
+    }
+}
+
 AocDay20::AocDay20():AocDay(20)
 {
 }

@@ -53,7 +53,7 @@ class Tile
         vector<string> get_tile_map(); // used for testing.
         int get_border(Border border);
         map<Border, int> get_borders();
-        
+        void perform_manipulation(Manipulation manipulation);
         
 };
 
