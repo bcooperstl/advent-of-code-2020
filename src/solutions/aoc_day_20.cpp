@@ -133,6 +133,23 @@ void Tile::build_border_values()
             m_borders[EastBack]  |= (1 << i);
         }
     }
+    /* Palindrom check */
+    if (m_borders[NorthFront] == m_borders[NorthBack])
+    {
+        cout << "PALINDROME detected on tile " << m_id << " For the North edge" << endl;
+    }
+    if (m_borders[EastFront] == m_borders[EastBack])
+    {
+        cout << "PALINDROME detected on tile " << m_id << " For the East edge" << endl;
+    }
+    if (m_borders[SouthFront] == m_borders[SouthBack])
+    {
+        cout << "PALINDROME detected on tile " << m_id << " For the South edge" << endl;
+    }
+    if (m_borders[WestFront] == m_borders[WestBack])
+    {
+        cout << "PALINDROME detected on tile " << m_id << " For the West edge" << endl;
+    }
 }
 
 /*
