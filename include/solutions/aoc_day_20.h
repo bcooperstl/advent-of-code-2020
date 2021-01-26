@@ -13,6 +13,8 @@
 
 #define TILE_NUM_BORDERS 8
 
+#define PUZZLE_MAX_SIDE_LEN 12
+
 enum Border
 {
     NorthFront=0,
@@ -59,19 +61,32 @@ class Tile
         
 };
 
+class Puzzle
+{
+    private:
+        int m_side_len;
+        Tile *** m_puzzle; // stored in row (y) then column (x) order.
+    public:
+        Puzzle(int side_len);
+        ~Puzzle();
+        Tile * get_tile(int x, int y);
+        void set_tile(int x, int y, Tile * tile);
+};
+
 class AocDay20 : public AocDay
 {
     private:
-        Manipulation m_manipulation_table[TILE_NUM_BORDERS][TILE_NUM_BORDERS]; // first index is from. second index is to.
+        static Manipulation m_manipulation_table[TILE_NUM_BORDERS][TILE_NUM_BORDERS]; // first index is from. second index is to.
         void parse_input(string filename, vector<Tile *> & tiles);
         void build_border_lookup_map(vector<Tile *> & tiles, map<int, vector<Tile *>> & lookup_map);
         void classify_tiles(vector<Tile *> & tiles, vector<Tile *> & corners, vector<Tile *> & edges, vector<Tile *> & middles, map<int, vector<Tile *>> & lookup_map);
         void build_manipulation_table();
+        void align_for_top_left_corner(Tile * tile, map<int, vector<Tile *>> & border_lookup_map);
     public:
         AocDay20();
         ~AocDay20();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 #endif

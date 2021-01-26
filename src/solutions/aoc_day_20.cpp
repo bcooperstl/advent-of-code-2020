@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <iterator>
+#include <cmath>
 
 #include "aoc_day_20.h"
 #include "file_utils.h"
@@ -326,6 +327,39 @@ void Tile::perform_manipulation(Manipulation manipulation)
     }
 }
 
+Puzzle::Puzzle(int side_len)
+{
+    m_side_len = side_len;
+    m_puzzle = new Tile ** [m_side_len];
+    for (int i=0; i<m_side_len; i++)
+    {
+        m_puzzle[i] = new Tile * [m_side_len];
+        for (int j=0; j<m_side_len; j++)
+        {
+            m_puzzle[i][j]=NULL;
+        }
+    }
+}
+
+Puzzle::~Puzzle()
+{
+    for (int i=0; i<m_side_len; i++)
+    {
+        delete m_puzzle[i];
+    }
+    delete m_puzzle;
+}
+
+Tile * Puzzle::get_tile(int x, int y)
+{
+    return m_puzzle[y][x];
+}
+
+void Puzzle::set_tile(int x, int y, Tile * tile)
+{
+    m_puzzle[y][x]=tile;
+}
+
 AocDay20::AocDay20():AocDay(20)
 {
     build_manipulation_table();
@@ -511,14 +545,100 @@ string AocDay20::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+/* Planned approach
+* Choose the first corner in the list to go in the top-left of the puzzle.
+* Identify which two sides have only one Tile in the lookup map:
+    * If it is North and West, this is good to go.
+    * If it is North and East, do a RightRotate270Degrees to align them to North and West
+    * If it is East and South, do a RightRotate180Degrees to align them to North and West
+    * If it is South and West, do a RightRotate90Degrees to align them to North and West.
+* Place the properly-rotate tile in the puzzle[0][0] location.
+*/
+
+void AocDay20::align_for_top_left_corner(Tile * tile, map<int, vector<Tile *>> & border_lookup_map)
+{
+    cout << "Aligning corner tile " << tile->get_id() << " in the top-left corner" << endl;
+    
+    int north_lookup_count = border_lookup_map[tile->get_min_border(NorthFront, NorthBack)].size();
+    int east_lookup_count = border_lookup_map[tile->get_min_border(EastFront, EastBack)].size();
+    int south_lookup_count = border_lookup_map[tile->get_min_border(SouthFront, SouthBack)].size();
+    int west_lookup_count = border_lookup_map[tile->get_min_border(WestFront, WestBack)].size();
+    
+    cout << "North lookup count is " << north_lookup_count 
+         << " East lookup count is " << east_lookup_count
+         << " South lookup count is " << south_lookup_count
+         << " West lookup count is " << west_lookup_count << endl;
+    
+    if (north_lookup_count == 1 && east_lookup_count == 2 && south_lookup_count == 2 && west_lookup_count == 1)
+    {
+        cout << "No rotation needed" << endl;
+    }
+    else if (north_lookup_count == 1 && east_lookup_count == 1 && south_lookup_count == 2 && west_lookup_count == 2)
+    {
+        cout << "Right Rotating by 270 degrees" << endl;
+        tile->perform_manipulation(RightRotate270Degrees);
+    }
+    else if (north_lookup_count == 2 && east_lookup_count == 1 && south_lookup_count == 1 && west_lookup_count == 2)
+    {
+        cout << "Right Rotating by 180 degrees" << endl;
+        tile->perform_manipulation(RightRotate180Degrees);
+    }
+    else if (north_lookup_count == 2 && east_lookup_count == 2 && south_lookup_count == 1 && west_lookup_count == 1)
+    {
+        cout << "Right Rotating by 90 degrees" << endl;
+        tile->perform_manipulation(RightRotate90Degrees);
+    }
+    else 
+    {
+        cout << "*****ERROR determining rotation for top-left tile*****" << endl;
+    }
+}
+
+string AocDay20::part2(string filename, vector<string> extra_args)
+{
+    vector<Tile *> tiles, corners, edges, middles;
+    map<int, vector<Tile *>> border_lookup_map;
+    parse_input(filename, tiles);
+    long long product = 1;
+    
+    build_border_lookup_map(tiles, border_lookup_map);
+    classify_tiles(tiles, corners, edges, middles, border_lookup_map);
+    
+    int puzzle_side_len = (int) sqrt(tiles.size());
+    cout << "There are " << tiles.size() << " tiles, so the puzzle is " << puzzle_side_len << "x" << puzzle_side_len << endl;
+    
+    align_for_top_left_corner(corners[0], border_lookup_map);
+    Puzzle puzzle(puzzle_side_len);
+    puzzle.set_tile(0, 0, corners[0]);
+    
+    for (int i=0; i<corners.size(); i++)
+    {
+        product *= (long long)(corners[i]->get_id());
+    }
+    
+    ostringstream out;
+    out << product;
+    
+    // Clean up the dynamically allocated tiles
+    for (int i=0; i<tiles.size(); i++)
+    {
+        delete tiles[i];
+    }
+    tiles.clear();
+    return out.str();
+}
+
 /* 
 See day20_manipuliation_table.md for the details of this table.
 This will be a lookup table to get the maniuplaiton needed to move a value from any border to any border.
 The first index is the FromBorder and the second index is the ToBorder.
 */
 
+Manipulation AocDay20::m_manipulation_table[TILE_NUM_BORDERS][TILE_NUM_BORDERS];
+
 void AocDay20::build_manipulation_table()
 {
+    cout << "entering build manipulation_table" << endl;
     m_manipulation_table[NorthFront][NorthFront]=RightRotate0Degrees;
     m_manipulation_table[NorthFront][EastFront ]=RightRotate90Degrees;
     m_manipulation_table[NorthFront][SouthFront]=RightRotate180Degrees;
@@ -590,4 +710,6 @@ void AocDay20::build_manipulation_table()
     m_manipulation_table[WestBack  ][EastBack  ]=RightRotate180Degrees;
     m_manipulation_table[WestBack  ][SouthBack ]=RightRotate270Degrees;
     m_manipulation_table[WestBack  ][WestBack  ]=RightRotate0Degrees;
+    cout << "exiting build manipulation_table" << endl;
+
 }
