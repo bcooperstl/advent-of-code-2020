@@ -52,6 +52,7 @@ class Tile
         int get_id();
         vector<string> get_tile_map(); // used for testing.
         int get_border(Border border);
+        int get_paired_border(Border border);
         int get_min_border(Border border1, Border border2);
         map<Border, int> get_borders();
         void perform_manipulation(Manipulation manipulation);
@@ -61,9 +62,11 @@ class Tile
 class AocDay20 : public AocDay
 {
     private:
+        Manipulation m_manipulation_table[TILE_NUM_BORDERS][TILE_NUM_BORDERS]; // first index is from. second index is to.
         void parse_input(string filename, vector<Tile *> & tiles);
         void build_border_lookup_map(vector<Tile *> & tiles, map<int, vector<Tile *>> & lookup_map);
         void classify_tiles(vector<Tile *> & tiles, vector<Tile *> & corners, vector<Tile *> & edges, vector<Tile *> & middles, map<int, vector<Tile *>> & lookup_map);
+        void build_manipulation_table();
     public:
         AocDay20();
         ~AocDay20();

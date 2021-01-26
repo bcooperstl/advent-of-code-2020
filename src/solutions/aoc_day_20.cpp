@@ -77,6 +77,30 @@ int Tile::get_border(Border border)
     return m_borders[border];
 }
 
+int Tile::get_paired_border(Border border)
+{
+    switch (border)
+    {
+        case NorthFront:
+            return m_borders[NorthBack];
+        case NorthBack:
+            return m_borders[NorthFront];
+        case EastFront:
+            return m_borders[EastBack];
+        case EastBack:
+            return m_borders[EastFront];
+        case SouthFront:
+            return m_borders[SouthBack];
+        case SouthBack:
+            return m_borders[SouthFront];
+        case WestFront:
+            return m_borders[WestBack];
+        case WestBack:
+            return m_borders[WestFront];
+    }
+    return 0;
+}
+
 int Tile::get_min_border(Border border1, Border border2)
 {
     return (m_borders[border1] <= m_borders[border2] ? m_borders[border1] : m_borders[border2]);
@@ -304,6 +328,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
 
 AocDay20::AocDay20():AocDay(20)
 {
+    build_manipulation_table();
 }
 
 AocDay20::~AocDay20()
@@ -486,3 +511,83 @@ string AocDay20::part1(string filename, vector<string> extra_args)
     return out.str();
 }
 
+/* 
+See day20_manipuliation_table.md for the details of this table.
+This will be a lookup table to get the maniuplaiton needed to move a value from any border to any border.
+The first index is the FromBorder and the second index is the ToBorder.
+*/
+
+void AocDay20::build_manipulation_table()
+{
+    m_manipulation_table[NorthFront][NorthFront]=RightRotate0Degrees;
+    m_manipulation_table[NorthFront][EastFront ]=RightRotate90Degrees;
+    m_manipulation_table[NorthFront][SouthFront]=RightRotate180Degrees;
+    m_manipulation_table[NorthFront][WestFront ]=RightRotate270Degrees;
+    m_manipulation_table[NorthFront][NorthBack ]=VerticalFlip;
+    m_manipulation_table[NorthFront][EastBack  ]=ForwardSlashFlip;
+    m_manipulation_table[NorthFront][SouthBack ]=HorizontalFlip;
+    m_manipulation_table[NorthFront][WestBack  ]=BackwardSlashFlip;
+
+    m_manipulation_table[EastFront ][NorthFront]=RightRotate270Degrees;
+    m_manipulation_table[EastFront ][EastFront ]=RightRotate0Degrees;
+    m_manipulation_table[EastFront ][SouthFront]=RightRotate90Degrees;
+    m_manipulation_table[EastFront ][WestFront ]=RightRotate180Degrees;
+    m_manipulation_table[EastFront ][NorthBack ]=ForwardSlashFlip;
+    m_manipulation_table[EastFront ][EastBack  ]=HorizontalFlip;
+    m_manipulation_table[EastFront ][SouthBack ]=BackwardSlashFlip;
+    m_manipulation_table[EastFront ][WestBack  ]=VerticalFlip;
+
+    m_manipulation_table[SouthFront][NorthFront]=RightRotate180Degrees;
+    m_manipulation_table[SouthFront][EastFront ]=RightRotate270Degrees;
+    m_manipulation_table[SouthFront][SouthFront]=RightRotate0Degrees;
+    m_manipulation_table[SouthFront][WestFront ]=RightRotate90Degrees;
+    m_manipulation_table[SouthFront][NorthBack ]=HorizontalFlip;
+    m_manipulation_table[SouthFront][EastBack  ]=BackwardSlashFlip;
+    m_manipulation_table[SouthFront][SouthBack ]=VerticalFlip;
+    m_manipulation_table[SouthFront][WestBack  ]=ForwardSlashFlip;
+
+    m_manipulation_table[WestFront ][NorthFront]=RightRotate90Degrees;
+    m_manipulation_table[WestFront ][EastFront ]=RightRotate180Degrees;
+    m_manipulation_table[WestFront ][SouthFront]=RightRotate270Degrees;
+    m_manipulation_table[WestFront ][WestFront ]=RightRotate0Degrees;
+    m_manipulation_table[WestFront ][NorthBack ]=BackwardSlashFlip;
+    m_manipulation_table[WestFront ][EastBack  ]=VerticalFlip;
+    m_manipulation_table[WestFront ][SouthBack ]=ForwardSlashFlip;
+    m_manipulation_table[WestFront ][WestBack  ]=HorizontalFlip;
+
+    m_manipulation_table[NorthBack ][NorthFront]=VerticalFlip;
+    m_manipulation_table[NorthBack ][EastFront ]=ForwardSlashFlip;
+    m_manipulation_table[NorthBack ][SouthFront]=HorizontalFlip;
+    m_manipulation_table[NorthBack ][WestFront ]=BackwardSlashFlip;
+    m_manipulation_table[NorthBack ][NorthBack ]=RightRotate0Degrees;
+    m_manipulation_table[NorthBack ][EastBack  ]=RightRotate90Degrees;
+    m_manipulation_table[NorthBack ][SouthBack ]=RightRotate180Degrees;
+    m_manipulation_table[NorthBack ][WestBack  ]=RightRotate270Degrees;
+
+    m_manipulation_table[EastBack  ][NorthFront]=ForwardSlashFlip;
+    m_manipulation_table[EastBack  ][EastFront ]=HorizontalFlip;
+    m_manipulation_table[EastBack  ][SouthFront]=BackwardSlashFlip;
+    m_manipulation_table[EastBack  ][WestFront ]=VerticalFlip;
+    m_manipulation_table[EastBack  ][NorthBack ]=RightRotate270Degrees;
+    m_manipulation_table[EastBack  ][EastBack  ]=RightRotate0Degrees;
+    m_manipulation_table[EastBack  ][SouthBack ]=RightRotate90Degrees;
+    m_manipulation_table[EastBack  ][WestBack  ]=RightRotate180Degrees;
+
+    m_manipulation_table[SouthBack ][NorthFront]=HorizontalFlip;
+    m_manipulation_table[SouthBack ][EastFront ]=BackwardSlashFlip;
+    m_manipulation_table[SouthBack ][SouthFront]=VerticalFlip;
+    m_manipulation_table[SouthBack ][WestFront ]=ForwardSlashFlip;
+    m_manipulation_table[SouthBack ][NorthBack ]=RightRotate180Degrees;
+    m_manipulation_table[SouthBack ][EastBack  ]=RightRotate270Degrees;
+    m_manipulation_table[SouthBack ][SouthBack ]=RightRotate0Degrees;
+    m_manipulation_table[SouthBack ][WestBack  ]=RightRotate90Degrees;
+
+    m_manipulation_table[WestBack  ][NorthFront]=BackwardSlashFlip;
+    m_manipulation_table[WestBack  ][EastFront ]=VerticalFlip;
+    m_manipulation_table[WestBack  ][SouthFront]=ForwardSlashFlip;
+    m_manipulation_table[WestBack  ][WestFront ]=HorizontalFlip;
+    m_manipulation_table[WestBack  ][NorthBack ]=RightRotate90Degrees;
+    m_manipulation_table[WestBack  ][EastBack  ]=RightRotate180Degrees;
+    m_manipulation_table[WestBack  ][SouthBack ]=RightRotate270Degrees;
+    m_manipulation_table[WestBack  ][WestBack  ]=RightRotate0Degrees;
+}
