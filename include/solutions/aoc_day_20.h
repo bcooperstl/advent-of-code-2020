@@ -52,13 +52,13 @@ class Tile
         void set_map(vector<string> map_lines);
         void display();
         int get_id();
-        vector<string> get_tile_map(); // used for testing.
+        vector<string> get_tile_map(); // used for testing and displaying puzzles.
         int get_border(Border border);
         int get_paired_border(Border border);
         int get_min_border(Border border1, Border border2);
         map<Border, int> get_borders();
         void perform_manipulation(Manipulation manipulation);
-        
+        Border get_border_for_value(int value);
 };
 
 class Puzzle
@@ -71,6 +71,8 @@ class Puzzle
         ~Puzzle();
         Tile * get_tile(int x, int y);
         void set_tile(int x, int y, Tile * tile);
+        void display();
+        void check_solution();
 };
 
 class AocDay20 : public AocDay
@@ -82,6 +84,8 @@ class AocDay20 : public AocDay
         void classify_tiles(vector<Tile *> & tiles, vector<Tile *> & corners, vector<Tile *> & edges, vector<Tile *> & middles, map<int, vector<Tile *>> & lookup_map);
         void build_manipulation_table();
         void align_for_top_left_corner(Tile * tile, map<int, vector<Tile *>> & border_lookup_map);
+        void work_tile_to_right(int row, int col, Puzzle & puzzle, map<int, vector<Tile *>> & border_lookup_map);
+        void work_tile_below(int row, int col, Puzzle & puzzle, map<int, vector<Tile *>> & border_lookup_map);
     public:
         AocDay20();
         ~AocDay20();

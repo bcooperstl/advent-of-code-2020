@@ -117,6 +117,19 @@ map<Border, int> Tile::get_borders()
     return borders;
 }
 
+Border Tile::get_border_for_value(int value)
+{
+    for (int i=0; i<TILE_NUM_BORDERS; i++)
+    {
+        if (m_borders[i] == value)
+        {
+            return static_cast<Border>(i);
+        }
+    }
+    cout << "*****Value " << value << " not found in the borders. Check your code*****" << endl;
+    return NorthFront; // no-op
+}
+
 /* Initial plan:
 * Initialize all 8 border values to 0.
 * For i from 0 to 9
@@ -360,6 +373,99 @@ void Puzzle::set_tile(int x, int y, Tile * tile)
     m_puzzle[y][x]=tile;
 }
 
+void Puzzle::display()
+{
+    for (int y=0; y<m_side_len; y++)
+    {
+        for (int x=0; x<m_side_len; x++)
+        {
+            if (m_puzzle[y][x] != NULL)
+            {
+                cout << "  " << m_puzzle[y][x]->get_id() << "  ";
+            }
+            else
+            {
+                cout << "  NULL  ";
+            }
+        }
+        cout << endl;
+    }
+    cout << endl;
+    vector<string> temp[PUZZLE_MAX_SIDE_LEN];
+    for (int y=0; y<m_side_len; y++)
+    {
+        for (int x=0; x<m_side_len; x++)
+        {
+            if (m_puzzle[y][x] != NULL)
+            {
+                temp[x]=m_puzzle[y][x]->get_tile_map();
+            }
+        }
+        
+        for (int tile_y=0; tile_y<TILE_SIDE_LEN; tile_y++)
+        {
+            for (int x=0; x<m_side_len; x++)
+            {
+                if (m_puzzle[y][x] != NULL)
+                {
+                    cout << temp[x][tile_y] << " ";
+                }
+                else
+                {
+                    cout << "           ";
+                }
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+    cout << endl;    
+}
+
+void Puzzle::check_solution()
+{
+    cout << "Checking puzzle solution" << endl;
+    // Check the EastFront of each tile matches the WestBack (recipricol) of tile to the right of it
+    for (int y=0; y<m_side_len; y++)
+    {
+        for (int x=0; x<m_side_len-1; x++)
+        {
+            if (m_puzzle[y][x] == NULL || m_puzzle[y][x+1] == NULL)
+            {
+                cout << "NULL FOUND. CANNOT FULLY CHECK" << endl;
+            }
+            else
+            {
+                if ((m_puzzle[y][x]->get_border(EastFront) != m_puzzle[y][x+1]->get_border(WestBack)) ||
+                    (m_puzzle[y][x]->get_border(EastBack)  != m_puzzle[y][x+1]->get_border(WestFront)))
+                {
+                    cout << "******* Puzzle fails: row " << y << " columns " << x << " and " << x+1 << " mismatch on the East/West borders******" << endl;
+                }
+            }
+        }
+    }
+    // Check the SouthFront of each tile matches the NorthBack (recipricol) of tile to the right of it
+    for (int y=0; y<m_side_len-1; y++)
+    {
+        for (int x=0; x<m_side_len; x++)
+        {
+            if (m_puzzle[y][x] == NULL || m_puzzle[y+1][x] == NULL)
+            {
+                cout << "NULL FOUND. CANNOT FULLY CHECK" << endl;
+            }
+            else
+            {
+                if ((m_puzzle[y][x]->get_border(SouthFront) != m_puzzle[y+1][x]->get_border(NorthBack)) ||
+                    (m_puzzle[y][x]->get_border(SouthBack)  != m_puzzle[y+1][x]->get_border(NorthFront)))
+                {
+                    cout << "******* Puzzle fails: rows " << y << " and " << y+1 << " columns " << x << " mismatch on the North/South borders******" << endl;
+                }
+            }
+        }
+    }
+    cout << "Done checking puzzle solution" << endl;
+}
+
 AocDay20::AocDay20():AocDay(20)
 {
     build_manipulation_table();
@@ -594,6 +700,94 @@ void AocDay20::align_for_top_left_corner(Tile * tile, map<int, vector<Tile *>> &
     }
 }
 
+void AocDay20::work_tile_to_right(int row, int col, Puzzle & puzzle, map<int, vector<Tile *>> & border_lookup_map)
+{
+    Tile * base_tile=puzzle.get_tile(col, row); // function takes x,y    
+    Tile * target_tile=NULL;
+    cout << "Filling in the tile to the right of row=" << row << " col=" << col << ", which is ID " << base_tile->get_id() << endl;
+    int base_east_front_border = base_tile->get_border(EastFront);
+    int target_west_front_border = base_tile->get_border(EastBack);
+    
+    int min_border = base_tile->get_min_border(EastFront, EastBack);
+    cout << " The base tile has the EastFront Border with value " << base_east_front_border << endl;
+    cout << " This means the target will need to have the value " << target_west_front_border << " as the WestFront border to line up " << endl;
+    cout << " The minimum of these two values to use for the lookup is " << min_border << endl;
+    
+    vector<Tile *> tiles = border_lookup_map[min_border];
+    cout << " There are " << tiles.size() << " possible tiles:" << endl;
+    if (tiles.size() != 2)
+    {
+        cout << "******Expected 2 possible tiles. Fix this ******" << endl;
+    }
+    for (int i=0; i<tiles.size(); i++)
+    {
+        cout << tiles[i]->get_id();
+    }
+    cout << endl;
+    
+    if (tiles[0]==base_tile)
+    {
+        target_tile = tiles[1];
+    }
+    else
+    {
+        target_tile = tiles[0];
+    }
+    
+    cout << " Target tile is " << target_tile->get_id() << endl;
+    Border current_target_border_position = target_tile->get_border_for_value(target_west_front_border);
+    Manipulation manipulation_to_perform = m_manipulation_table[current_target_border_position][WestFront]; // looked up by [from][to]
+    
+    target_tile->perform_manipulation(manipulation_to_perform);
+    
+    puzzle.set_tile(col+1,row,target_tile);
+    //puzzle.display();
+}
+
+void AocDay20::work_tile_below(int row, int col, Puzzle & puzzle, map<int, vector<Tile *>> & border_lookup_map)
+{
+    Tile * base_tile=puzzle.get_tile(col, row); // function takes x,y    
+    Tile * target_tile=NULL;
+    cout << "Filling in the tile below row=" << row << " col=" << col << ", which is ID " << base_tile->get_id() << endl;
+    int base_south_front_border = base_tile->get_border(SouthFront);
+    int target_north_front_border = base_tile->get_border(SouthBack);
+    
+    int min_border = base_tile->get_min_border(SouthFront, SouthBack);
+    cout << " The base tile has the SouthFront Border with value " << base_south_front_border << endl;
+    cout << " This means the target will need to have the value " << target_north_front_border << " as the NorthFront border to line up " << endl;
+    cout << " The minimum of these two values to use for the lookup is " << min_border << endl;
+    
+    vector<Tile *> tiles = border_lookup_map[min_border];
+    cout << " There are " << tiles.size() << " possible tiles:" << endl;
+    if (tiles.size() != 2)
+    {
+        cout << "******Expected 2 possible tiles. Fix this ******" << endl;
+    }
+    for (int i=0; i<tiles.size(); i++)
+    {
+        cout << tiles[i]->get_id();
+    }
+    cout << endl;
+    
+    if (tiles[0]==base_tile)
+    {
+        target_tile = tiles[1];
+    }
+    else
+    {
+        target_tile = tiles[0];
+    }
+    
+    cout << " Target tile is " << target_tile->get_id() << endl;
+    Border current_target_border_position = target_tile->get_border_for_value(target_north_front_border);
+    Manipulation manipulation_to_perform = m_manipulation_table[current_target_border_position][NorthFront]; // looked up by [from][to]
+    
+    target_tile->perform_manipulation(manipulation_to_perform);
+    
+    puzzle.set_tile(col,row+1,target_tile);
+    //puzzle.display();
+}
+
 string AocDay20::part2(string filename, vector<string> extra_args)
 {
     vector<Tile *> tiles, corners, edges, middles;
@@ -610,6 +804,29 @@ string AocDay20::part2(string filename, vector<string> extra_args)
     align_for_top_left_corner(corners[0], border_lookup_map);
     Puzzle puzzle(puzzle_side_len);
     puzzle.set_tile(0, 0, corners[0]);
+    
+    puzzle.display();
+    
+    // top row
+    for (int i=0; i<puzzle_side_len-1; i++)
+    {
+        work_tile_to_right(0, i, puzzle, border_lookup_map);
+    }
+    
+    // subsequent rows - work down the left column and then across
+    for (int y=0; y<puzzle_side_len-1; y++)
+    {
+        work_tile_below(y, 0, puzzle, border_lookup_map);
+        for (int x=0; x<puzzle_side_len-1; x++)
+        {
+            work_tile_to_right(y+1, x, puzzle, border_lookup_map);
+        }
+    }
+    
+    puzzle.display();
+    // Chaos - testing only:
+    // puzzle.get_tile(1,1)->perform_manipulation(RightRotate180Degrees);
+    puzzle.check_solution();
     
     for (int i=0; i<corners.size(); i++)
     {
