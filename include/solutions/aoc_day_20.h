@@ -8,12 +8,15 @@
 
 #define TILE_CHAR_OFF '.'
 #define TILE_CHAR_ON '#'
+#define IMAGE_CHAR_MONSTER O
 
 #define TILE_SIDE_LEN 10
 
 #define TILE_NUM_BORDERS 8
 
 #define PUZZLE_MAX_SIDE_LEN 12
+
+#define PUZZLE_NUM_IMAGES 8
 
 enum Border
 {
@@ -65,7 +68,11 @@ class Puzzle
 {
     private:
         int m_side_len;
+        int m_picture_side_len;
         Tile *** m_puzzle; // stored in row (y) then column (x) order.
+        char ** m_images[PUZZLE_NUM_IMAGES];
+        void populate_first_image();
+        void manipulate_first_image_to_others();
     public:
         Puzzle(int side_len);
         ~Puzzle();
@@ -73,6 +80,8 @@ class Puzzle
         void set_tile(int x, int y, Tile * tile);
         void display();
         void check_solution();
+        void populate_images();
+        void display_image(int image_id);
 };
 
 class AocDay20 : public AocDay

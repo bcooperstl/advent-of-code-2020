@@ -231,7 +231,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[old_x][9-old_y] = old_map[old_y][old_x];
+                    m_map[old_x][TILE_SIDE_LEN-1-old_y] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -248,7 +248,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[9-old_y][9-old_x] = old_map[old_y][old_x];
+                    m_map[TILE_SIDE_LEN-1-old_y][TILE_SIDE_LEN-1-old_x] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -265,7 +265,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[9-old_x][old_y] = old_map[old_y][old_x];
+                    m_map[TILE_SIDE_LEN-1-old_x][old_y] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -282,7 +282,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[9-old_y][old_x] = old_map[old_y][old_x];
+                    m_map[TILE_SIDE_LEN-1-old_y][old_x] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -299,7 +299,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[old_y][9-old_x] = old_map[old_y][old_x];
+                    m_map[old_y][TILE_SIDE_LEN-1-old_x] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -316,7 +316,7 @@ void Tile::perform_manipulation(Manipulation manipulation)
             {
                 for (int old_x=0; old_x<TILE_SIDE_LEN; old_x++)
                 {
-                    m_map[9-old_x][9-old_y] = old_map[old_y][old_x];
+                    m_map[TILE_SIDE_LEN-1-old_x][TILE_SIDE_LEN-1-old_y] = old_map[old_y][old_x];
                 }
             }
             break;
@@ -352,15 +352,37 @@ Puzzle::Puzzle(int side_len)
             m_puzzle[i][j]=NULL;
         }
     }
+    
+    m_picture_side_len = m_side_len * (TILE_SIDE_LEN - 2); // drop the borders from each tile and there are m_side_len tiles
+    for (int i=0; i<PUZZLE_NUM_IMAGES; i++)
+    {
+        m_images[i]= new char * [m_picture_side_len];
+        for (int j=0; j<m_picture_side_len; j++)
+        {
+            m_images[i][j] = new char [m_picture_side_len];
+            for (int k=0; k<m_picture_side_len; k++)
+            {
+                m_images[i][j][k]=' ';
+            }
+        }
+    }
 }
 
 Puzzle::~Puzzle()
 {
     for (int i=0; i<m_side_len; i++)
     {
-        delete m_puzzle[i];
+        delete [] m_puzzle[i];
     }
     delete m_puzzle;
+    for (int i=0; i<PUZZLE_NUM_IMAGES; i++)
+    {
+        for (int j=0; j<m_picture_side_len; j++)
+        {
+            delete [] m_images[i][j];
+        }
+        delete [] m_images[i];
+    }
 }
 
 Tile * Puzzle::get_tile(int x, int y)
@@ -464,6 +486,79 @@ void Puzzle::check_solution()
         }
     }
     cout << "Done checking puzzle solution" << endl;
+}
+
+void Puzzle::populate_first_image()
+{
+    for (int tile_y=0; tile_y<m_side_len; tile_y++)
+    {
+        for (int tile_x=0; tile_x<m_side_len; tile_x++)
+        {
+            vector<string> tile_map = m_puzzle[tile_y][tile_x]->get_tile_map();
+            for (int src_y=1; src_y<TILE_SIDE_LEN-1; src_y++) // want to skip the first and last rows
+            {
+                for (int src_x=1; src_x<TILE_SIDE_LEN-1; src_x++) // want to skip the first and last columns
+                {
+                    int dest_y=tile_y*(TILE_SIDE_LEN-2)+(src_y-1);
+                    int dest_x=tile_x*(TILE_SIDE_LEN-2)+(src_x-1);
+                    m_images[0][dest_y][dest_x]=tile_map[src_y][src_x];
+                }
+            }
+        }
+    }
+}
+
+void Puzzle::manipulate_first_image_to_others()
+{
+    for (int base_y=0; base_y<m_picture_side_len; base_y++)
+    {
+        for (int base_x=0; base_x<m_picture_side_len; base_x++)
+        {
+            // images[1] is RightRotate90Degrees
+            m_images[1][base_x][m_picture_side_len-1-base_y] = m_images[0][base_y][base_x];
+            // m_images[2] is RightRotate180Degrees
+            m_images[2][m_picture_side_len-1-base_y][m_picture_side_len-1-base_x] = m_images[0][base_y][base_x];
+            // m_images[3] is RightRotate270Degrees
+            m_images[3][m_picture_side_len-1-base_x][base_y] = m_images[0][base_y][base_x];
+            // m_images[4] is HorizontalFlip
+            m_images[4][m_picture_side_len-1-base_y][base_x] = m_images[0][base_y][base_x];
+            // m_images[5] is VerticalFlip
+            m_images[5][base_y][m_picture_side_len-1-base_x] = m_images[0][base_y][base_x];
+            // m_images[6] is ForwardSlashFlip
+            m_images[6][m_picture_side_len-1-base_x][m_picture_side_len-1-base_y] = m_images[0][base_y][base_x];
+            // m_images[7] is  BackwardSlashFlip
+            m_images[7][base_x][base_y] = m_images[0][base_y][base_x];
+        }
+    }
+}
+
+
+void Puzzle::populate_images()
+{
+    populate_first_image();
+    display_image(0);
+    manipulate_first_image_to_others();
+    display_image(1);
+    display_image(2);
+    display_image(3);
+    display_image(4);
+    display_image(5);
+    display_image(6);
+    display_image(7);
+}
+
+void Puzzle::display_image(int image_id)
+{
+    cout << "Image " << image_id << endl;
+    for (int y=0; y<m_picture_side_len; y++)
+    {
+        for (int x=0; x<m_picture_side_len; x++)
+        {
+            cout << m_images[image_id][y][x];
+        }
+        cout << endl;
+    }
+    cout << endl;
 }
 
 AocDay20::AocDay20():AocDay(20)
@@ -827,6 +922,8 @@ string AocDay20::part2(string filename, vector<string> extra_args)
     // Chaos - testing only:
     // puzzle.get_tile(1,1)->perform_manipulation(RightRotate180Degrees);
     puzzle.check_solution();
+    
+    puzzle.populate_images();
     
     for (int i=0; i<corners.size(); i++)
     {
