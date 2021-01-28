@@ -8,7 +8,7 @@
 
 #define TILE_CHAR_OFF '.'
 #define TILE_CHAR_ON '#'
-#define IMAGE_CHAR_MONSTER O
+#define IMAGE_CHAR_MONSTER 'O'
 
 #define TILE_SIDE_LEN 10
 
@@ -17,6 +17,8 @@
 #define PUZZLE_MAX_SIDE_LEN 12
 
 #define PUZZLE_NUM_IMAGES 8
+
+#define NUM_MONSTER_PIXELS 15
 
 enum Border
 {
@@ -82,6 +84,8 @@ class Puzzle
         void check_solution();
         void populate_images();
         void display_image(int image_id);
+        int mark_monsters(int image_id);
+        int get_count_of_on_chars(int image_id);
 };
 
 class AocDay20 : public AocDay

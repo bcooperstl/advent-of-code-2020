@@ -532,7 +532,6 @@ void Puzzle::manipulate_first_image_to_others()
     }
 }
 
-
 void Puzzle::populate_images()
 {
     populate_first_image();
@@ -559,6 +558,77 @@ void Puzzle::display_image(int image_id)
         cout << endl;
     }
     cout << endl;
+}
+
+/* sea monster is:
+ 01234567890123456789
+0                  # 
+1#    ##    ##    ###
+2 #  #  #  #  #  #   
+
+To find one, we will first look for the top point in rows 0 thru m_picture_side_len-2, columns 18 thru m_picture_side_len-1
+
+If a # is found there, check the following other indices:
+<1,-18>,<2,-17>,<2,-14>,<1,-13>,<1,-12>,<2,-11>,<2,-8>,<1,-7>,<1,-6>,<2,-5>,<2,-2>,<1,-1>,<1,0>,<1,1>
+
+If they are all #, then a monster is found and they need to be marked as O characters
+
+
+*/
+
+
+int Puzzle::mark_monsters(int image_id)
+{
+    cout << "Checking image " << image_id << " for monsters" << endl;
+    int monster_y[NUM_MONSTER_PIXELS] = {0, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 1};
+    int monster_x[NUM_MONSTER_PIXELS] = {0, -18, -17, -14, -13, -12, -11, -8, -7, -6, -5, -2, -1, 0, 1};
+    
+    int monsters = 0;
+    for (int y_tip=0; y_tip<m_picture_side_len-2-2; y_tip++)
+    {
+        for (int x_tip=18; x_tip<m_picture_side_len-1; x_tip++)
+        {
+            if (m_images[image_id][y_tip][x_tip] == TILE_CHAR_ON)
+            {
+                bool monster_found = true;
+                for (int i=0; i<NUM_MONSTER_PIXELS; i++)
+                {
+                    if (m_images[image_id][y_tip+monster_y[i]][x_tip+monster_x[i]] != TILE_CHAR_ON)
+                    {
+                        monster_found = false;
+                        break;
+                    }
+                }
+                if (monster_found == true)
+                {
+                    cout << " MONSTER FOUND. Tip at row=" << y_tip << " column=" << x_tip << "." << endl;
+                    monsters++;
+                    for (int i=0; i<NUM_MONSTER_PIXELS; i++)
+                    {
+                        m_images[image_id][y_tip+monster_y[i]][x_tip+monster_x[i]] = IMAGE_CHAR_MONSTER;
+                    }
+                }
+            }
+        }
+    }
+    cout << "There were " << monsters << " monsters found" << endl;
+    return monsters;
+}
+
+int Puzzle::get_count_of_on_chars(int image_id)
+{
+    int count = 0;
+    for (int y=0; y<m_picture_side_len; y++)
+    {
+        for (int x=0; x<m_picture_side_len; x++)
+        {
+            if (m_images[image_id][y][x]==TILE_CHAR_ON)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
 }
 
 AocDay20::AocDay20():AocDay(20)
@@ -925,13 +995,20 @@ string AocDay20::part2(string filename, vector<string> extra_args)
     
     puzzle.populate_images();
     
-    for (int i=0; i<corners.size(); i++)
+    int image_with_monsters = 0;
+    for (int i=0; i<8; i++)
     {
-        product *= (long long)(corners[i]->get_id());
+        int num_monsters = puzzle.mark_monsters(i);
+        if (num_monsters > 0)
+        {
+            puzzle.display_image(i);
+            image_with_monsters = i;
+        }
     }
+    cout << "Image " << image_with_monsters << " has monsters" << endl;
     
     ostringstream out;
-    out << product;
+    out << puzzle.get_count_of_on_chars(image_with_monsters);
     
     // Clean up the dynamically allocated tiles
     for (int i=0; i<tiles.size(); i++)
