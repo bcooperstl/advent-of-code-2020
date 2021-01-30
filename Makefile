@@ -185,6 +185,12 @@ build/solutions/aoc_day_19.o: src/solutions/aoc_day_19.cpp  \
 	include/common/constants.h
 	g++ ${CPPFLAGS} -o build/solutions/aoc_day_19.o -c src/solutions/aoc_day_19.cpp
 
+build/solutions/aoc_day_20.o: src/solutions/aoc_day_20.cpp  \
+	include/solutions/aoc_day_20.h \
+	include/solutions/aoc_day.h \
+	include/common/constants.h
+	g++ ${CPPFLAGS} -o build/solutions/aoc_day_20.o -c src/solutions/aoc_day_20.cpp
+
 bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_day_0.o \
 	build/solutions/aoc_day_1.o \
@@ -206,6 +212,7 @@ bin/lib/libsolutions.a: build/solutions/aoc_day.o  \
 	build/solutions/aoc_day_17.o \
 	build/solutions/aoc_day_18.o \
 	build/solutions/aoc_day_19.o \
+	build/solutions/aoc_day_20.o \
 	build/solutions/aoc_days.o
 	ar rcs bin/lib/libsolutions.a $^
 
@@ -225,6 +232,15 @@ build/runner/test_chinese_remainder_theorem.o : src/runner/test_chinese_remainde
 bin/test_chinese_remainder_theorem : build/runner/test_chinese_remainder_theorem.o \
 	bin/lib/librunner.a 
 	g++ ${CPPFLAGS} -o bin/test_chinese_remainder_theorem build/runner/test_chinese_remainder_theorem.o -Lbin/lib -lrunner
+
+build/solutions/test_day20_tile.o : src/solutions/test_day20_tile.cpp \
+	include/solutions/aoc_day_20.h
+	g++ ${CPPFLAGS} -o build/solutions/test_day20_tile.o -c src/solutions/test_day20_tile.cpp
+
+bin/test_day20_tile : build/solutions/test_day20_tile.o \
+	bin/lib/librunner.a \
+	bin/lib/libsolutions.a 
+	g++ ${CPPFLAGS} -o bin/test_day20_tile build/solutions/test_day20_tile.o -Lbin/lib -lsolutions -lrunner
 
 # The aoc executable
 build/aoc.o: src/aoc.cpp  \
@@ -272,12 +288,15 @@ clean:
 	build/solutions/aoc_day_17.o \
 	build/solutions/aoc_day_18.o \
 	build/solutions/aoc_day_19.o \
+	build/solutions/aoc_day_20.o \
+	build/solutions/test_day20_tile.o \
 	build/aoc.o  \
 	bin/lib/librunner.a  \
 	bin/lib/libscreen.a  \
 	bin/lib/libsolutions.a  \
 	bin/test_modulo_inverse  \
 	bin/test_chinese_remainder_theorem  \
+	bin/test_day20_tile  \
 	bin/aoc
 
 all: build/runner/aoc_test.o  \
@@ -310,10 +329,13 @@ all: build/runner/aoc_test.o  \
 	build/solutions/aoc_day_17.o \
 	build/solutions/aoc_day_18.o \
 	build/solutions/aoc_day_19.o \
+	build/solutions/aoc_day_20.o \
+	build/solutions/test_day20_tile.o \
 	build/aoc.o  \
 	bin/lib/librunner.a  \
 	bin/lib/libscreen.a  \
 	bin/lib/libsolutions.a  \
 	bin/test_modulo_inverse  \
 	bin/test_chinese_remainder_theorem  \
+	bin/test_day20_tile  \
 	bin/aoc

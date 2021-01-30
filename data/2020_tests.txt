@@ -122,3 +122,7 @@
 19,1,day19_input.txt,216
 19,2,test_cases/day19_test2.txt,12
 19,2,day19_input.txt,400
+20,1,test_cases/day20_test1.txt,20899048083289
+20,1,day20_input.txt,60145080587029
+20,2,test_cases/day20_test1.txt,273
+20,2,day20_input.txt,1901
