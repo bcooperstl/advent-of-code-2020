@@ -19,7 +19,7 @@ class Allergen
         vector<Ingredient *> m_possible_ingredients;
         bool m_done;
     public:
-        Allergen(string name)
+        Allergen(string name);
         ~Allergen();
         string get_name();
         bool is_done();
@@ -35,7 +35,7 @@ class Ingredient
         vector<Allergen *> m_possible_allergens;
         bool m_done;
     public:
-        Ingredient(string name)
+        Ingredient(string name);
         ~Ingredient();
         string get_name();
         bool is_done();
