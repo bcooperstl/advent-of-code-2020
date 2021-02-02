@@ -276,6 +276,8 @@ There will be a `Tile * puzzle[MAX_PUZZLE_SIZE][MAX_PUZZLE_SIZE]` array that wil
 
 The `puzzle_edge_size` will be calculated by taking the square root of the total number of tiles.
 
+There will be a [lookup table](day20_manipulation_table.md) created that will allow me to lookup which manipulation is needed to move an edge from one border to any other border.
+
 ### Aligning the top-left corner ###
 
 * Choose the first corner in the list to go in the top-left of the puzzle.
