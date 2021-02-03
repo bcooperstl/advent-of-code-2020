@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <map>
 #include <set>
+#include <algorithm>
 
 #include "aoc_day_21.h"
 #include "file_utils.h"
@@ -599,6 +600,38 @@ string AocDay21::part1(string filename, vector<string> extra_args)
     
     ostringstream out;
     out << total_not_allergen;
+    return out.str();
+}
+
+bool allegen_sort_lt_function(Allergen * & left, Allergen * & right)
+{
+    return (left->get_name() < right->get_name());
+}
+
+string AocDay21::part2(string filename, vector<string> extra_args)
+{
+    vector<Food *> foods;
+    vector<Allergen *> allergens;
+    vector<Ingredient *> ingredients;
+    
+    parse_input(filename, foods, allergens, ingredients);
+    
+    work_allergens(foods, allergens, ingredients);
+    
+    sort(allergens.begin(), allergens.end(), allegen_sort_lt_function);
+    
+    ostringstream out;
+    for (int i=0; i<allergens.size(); i++)
+    {
+        out << allergens[i]->get_matched_ingredient()->get_name();
+        if (i != (allergens.size() -1))
+        {
+            out << ',';
+        }
+    }
+    
+    cleanup(foods, allergens, ingredients);
+    
     return out.str();
 }
 
