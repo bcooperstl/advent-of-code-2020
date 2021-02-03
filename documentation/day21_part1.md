@@ -90,7 +90,9 @@ I will do the first pass of single-allergen identification first, and then the p
         * Else - zero members - throw an error and redo some logic
     * If work_done is true, start the master loop over again. There may be more we can eliminate before going to the pair-wise round
     * Loop over the list of Allergens with allergen1 - starting from position 0 to position *n-1* where *n* is the number of Allergens
+        * If the allergen is done, skip it
         * Loop over the list of Allergens with allergen2 - starting from one after the allergen1 position, and going to position *n*
+            * If the allergen is done, skip it
             * Get a list of all of the foods that contain both allergens
                 * Build a list of all of the not done ingredients that are common to all of the foods
                     * If this list has two members, we know we have a pair-wise match
