@@ -130,4 +130,4 @@
 21,1,test_cases/day21_test2.txt,7
 21,1,day21_input.txt,2162
 21,2,test_cases/day21_test1.txt,'mxmxvkd,sqjhc,fvjkl'
-
+21,2,day21_input.txt,'lmzg,cxk,bsqh,bdvmx,cpbzbx,drbm,cfnt,kqprv'
