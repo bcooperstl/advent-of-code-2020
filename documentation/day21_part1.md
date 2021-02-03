@@ -1,4 +1,4 @@
-# Day 21, Part 1 #
+# Day 21, Parts 1 and 2 #
 
 ## Requirements ##
 
@@ -6,7 +6,9 @@ Given a list of foods with their ingredients and a partial list of their allerge
 
 There is only one ingredient that contains an allergen. The allergen may or may not be marked in all foods, so the non-presense of the allergen does not invalidate the ingredient.
 
-Return a count of the number of ingredients in all the foods that can't possibly contain an allergen. Note that if an ingredient is in multiple foods, it is counted multiple times.
+For part 1, Return a count of the number of ingredients in all the foods that can't possibly contain an allergen. Note that if an ingredient is in multiple foods, it is counted multiple times.
+
+For part 2, Order the allergens alphabetically, and then make a comma-separated list of the ingredients that go with those allergens.
 
 ### Input Format ###
 
@@ -20,7 +22,9 @@ By inspection, I found that the most allergents a single food contains is 3.
 
 ### Output Format ###
 
-Integer -  the number of times ingredients appear that cannot possibly contain allergens.
+Part 1: Integer -  the number of times ingredients appear that cannot possibly contain allergens.
+
+Part 2: String - comma separted list of the ingredient names that go with the allergens.
 
 ## Test Cases ##
 
@@ -106,6 +110,14 @@ I will do the first pass of single-allergen identification first, and then the p
         * If work_done is true, break out of this; go back to single-elements before doing more pairs
 * At this point, all Allergens should be done. If not, more logic needs to be added to the program.
 
+### Updates for Part 2 ###
+
+All I need to do for part 2 is sort the allergen list alphabetically, and then create a comma-separated list of the ingredients that correspond to them.
+
 ## Things I learned ##
 
 Thinking though and developing the logic for the algorithm, especially to identify the matched-pair scenario.
+
+Well, it turns out that I didn't even need to develop the double-match category. Oh well, it was fun to do.
+
+
