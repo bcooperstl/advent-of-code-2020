@@ -1,0 +1,4 @@
+mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
+trh sbzzf mxmxvkd bar foo (contains dairy, spinach, strawberry)
+sqjhc foo bar cheese (contains strawberry, spinach)
+sqjhc mxmxvkd sbzzf cheese (contains fish)
