@@ -55,7 +55,6 @@ I'll create a deck data structure that contains:
     * else
         * Add player 2's card to the back of player 1's deck
         * Add player 1's card to the back of player 1's deck
-    *
 * If there are still cards in player 1's deck:
     * Output player 1's score
 * else 
@@ -64,4 +63,6 @@ I'll create a deck data structure that contains:
 ## Things I learned ##
 
 Pretty simple to develop the algorithm to play this game. I expect part 2 to be much harder.
+
+Using the c++ deque STL class to handle all of the queue operations. I was going to use the simple queue class, but I need to iterate over it.
 
