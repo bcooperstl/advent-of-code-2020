@@ -133,3 +133,4 @@
 21,2,day21_input.txt,'lmzg,cxk,bsqh,bdvmx,cpbzbx,drbm,cfnt,kqprv'
 22,1,test_cases/day22_test1.txt,306
 22,1,test_cases/day22_test2.txt,306
+22,1,day22_input.txt,32179
