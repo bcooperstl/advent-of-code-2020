@@ -134,3 +134,7 @@
 22,1,test_cases/day22_test1.txt,306
 22,1,test_cases/day22_test2.txt,306
 22,1,day22_input.txt,32179
+22,2,test_cases/day22_test1.txt,291
+22,2,test_cases/day22_test2.txt,291
+22,2,day22_input.txt,30498
+
