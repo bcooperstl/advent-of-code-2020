@@ -137,4 +137,8 @@
 22,2,test_cases/day22_test1.txt,291
 22,2,test_cases/day22_test2.txt,291
 22,2,day22_input.txt,30498
+#Extra parm for day 23 is for the number of rounds
+23,1,test_cases/day23_test1.txt,92658374,10
+23,1,test_cases/day23_test1.txt,67384529,100
+23,1,day23_input.txt,97624853,100
 
