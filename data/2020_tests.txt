@@ -144,3 +144,6 @@
 23,2,test_cases/day23_test1.txt,149245887792,10000000
 23,2,day23_input.txt,664642452305,10000000
 24,1,test_cases/day24_test1.txt,10
+24,1,day24_input.txt,386
+24,2,test_cases/day24_test1.txt,2208
+24,2,day24_input.txt,4214
