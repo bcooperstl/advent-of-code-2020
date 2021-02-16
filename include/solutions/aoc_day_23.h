@@ -9,7 +9,7 @@
 using namespace std;
 
 #define NUM_CUPS 9
-#define BIG_NUM_CUPS 20
+#define BIG_NUM_CUPS 1000000
 
 struct Cup
 {
@@ -50,7 +50,7 @@ public:
     ~BigGame();
     void init(string input);
     void play_rounds(int num_rounds);
-    string get_part2_answer();
+    long get_part2_answer();
     void display();
 };
 

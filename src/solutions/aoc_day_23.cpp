@@ -8,7 +8,7 @@
 #include "aoc_day_23.h"
 #include "file_utils.h"
 
-#define DEBUG_DAY23
+//#define DEBUG_DAY23
 
 using namespace std;
 
@@ -208,19 +208,22 @@ void BigGame::init(string input)
 #ifdef DEBUG_DAY23
         cout << "Setting " << BIG_NUM_CUPS << " --> " << m_current->label << endl;
 #endif
-    display();
+    //display();
 }    
 
-/*
 void BigGame::play_rounds(int num_rounds)
 {
     for (int i=0; i<num_rounds; i++)
     {
+        if (i%100000 == 0)
+        {
+            cout << "Round " << i << endl;
+        }
     #ifdef DEBUG_DAY23
         cout << "Playing a round starting with current cup " << m_current->label << endl;
     #endif
         
-        BigCup * picked_up[3];
+        BigGameCup * picked_up[3];
         picked_up[0]=m_current->next;
         picked_up[1]=picked_up[0]->next;
         picked_up[2]=picked_up[1]->next;
@@ -231,27 +234,43 @@ void BigGame::play_rounds(int num_rounds)
         cout << " Picked up " << picked_up[0]->label << "," << picked_up[1]->label << "," << picked_up[2]->label << endl;
     #endif
         
-        int dest_cup = (m_current->label ==  - 1 m_current->label-1;
-        if (dest_cust == -1)
-        BigCup * dest = m_cups[(m_current->label+NUM_CUPS-1)%NUM_CUPS];
-        while (dest == picked_up[0] || dest == picked_up[1] || dest == picked_up[2])
+        // Might have to speed this up - not sure how long the mods will take
+        int dest_option;
+        BigGameCup * dest = NULL;
+        dest_option = m_current->label;
+        for (int j=0; j<4; j++)
         {
-            dest = m_cups[(dest->label+NUM_CUPS-1)%NUM_CUPS];
+            dest_option--;
+            if (dest_option < 0)
+            {
+                dest_option+=BIG_NUM_CUPS;
+            }
+            dest = &m_cups[dest_option];
+            if (dest != picked_up[0] && dest != picked_up[1] && dest != picked_up[2])
+            {
+                break;
+            }
         }
+        
     #ifdef DEBUG_DAY23
         cout << " Destination is after " << dest->label << endl;
     #endif
         picked_up[2]->next=dest->next;
-        dest->next->prev=picked_up[2];
         dest->next=picked_up[0];
-        picked_up[0]->prev=dest;
         m_current = m_current->next;
     #ifdef DEBUG_DAY23
         cout << " next current cup is " << m_current->label << endl;
     #endif
     }
 }
-*/
+
+long BigGame::get_part2_answer()
+{
+    BigGameCup * first = m_cups[1].next;
+    BigGameCup * second = first->next;
+    
+    return ((long)first->label) * ((long)second->label);
+}
 
 AocDay23::AocDay23():AocDay(23)
 {
@@ -312,9 +331,9 @@ string AocDay23::part2(string filename, vector<string> extra_args)
     
     game.init(input);
     //game.display();
-    //game.play_rounds(num_rounds);
+    game.play_rounds(num_rounds);
     
     ostringstream out;
-    out << "";//game.get_part1_answer();
+    out << game.get_part2_answer();
     return out.str();
 }
