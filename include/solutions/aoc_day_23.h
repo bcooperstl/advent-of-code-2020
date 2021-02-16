@@ -9,6 +9,7 @@
 using namespace std;
 
 #define NUM_CUPS 9
+#define BIG_NUM_CUPS 20
 
 struct Cup
 {
@@ -33,6 +34,26 @@ public:
     string get_part1_answer();
 };
 
+struct BigGameCup
+{
+    BigGameCup * next;
+    int label;
+};
+
+class BigGame
+{
+private:
+    BigGameCup * m_cups;
+    BigGameCup * m_current;
+public:
+    BigGame();
+    ~BigGame();
+    void init(string input);
+    void play_rounds(int num_rounds);
+    string get_part2_answer();
+    void display();
+};
+
 class AocDay23 : public AocDay
 {
     private:
@@ -41,7 +62,7 @@ class AocDay23 : public AocDay
         AocDay23();
         ~AocDay23();
         string part1(string filename, vector<string> extra_args);
-        //string part2(string filename, vector<string> extra_args);
+        string part2(string filename, vector<string> extra_args);
 };
 
 
