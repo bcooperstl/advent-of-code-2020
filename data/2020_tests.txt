@@ -141,4 +141,5 @@
 23,1,test_cases/day23_test1.txt,92658374,10
 23,1,test_cases/day23_test1.txt,67384529,100
 23,1,day23_input.txt,97624853,100
-
+23,2,test_cases/day23_test1.txt,149245887792,10000000
+23,2,day23_input.txt,664642452305,10000000
